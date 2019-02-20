@@ -8,7 +8,7 @@ train_in = np.genfromtxt('./data/train_in.csv', delimiter=',')
 train_out = np.genfromtxt('./data/train_out.csv', delimiter=',')
 test_in = np.genfromtxt('./data/test_in.csv', delimiter=',')
 test_out = np.genfromtxt('./data/test_out.csv', delimiter=',')
-
+'''
 def Euclidean_distance(x1, x2, ax=0):
    return np.sqrt(np.sum((x1-x2)**2, axis = ax))
 
@@ -62,13 +62,13 @@ for method in ['cosine', 'manhattan', 'euclidean', 'l2', 'l1', 'cityblock']:
    conf_mat_train = metrics.confusion_matrix(train_out, classification_train)
    conf_mat_test = metrics.confusion_matrix(test_out, classification_test)
 
-
+'''
 
 #Task 3
 '''
 Here we choose a feature to compare discriminate between two digits
 The feature used is the number of pixels for which the pixel value > -1
-'''
+
 quality = np.zeros((10,10))
 for digits in itertools.combinations(range(10), 2):
    num_pixels = defaultdict(lambda: list())
@@ -77,11 +77,11 @@ for digits in itertools.combinations(range(10), 2):
          num_pixels[int(train_out[i])].append(np.sum(train_in[i] > -1))
 
    #Make histograms of the number of pixels for each category
-   # plt.hist(num_pixels[1], color='red', histtype='step', bins=np.linspace(0,256,50))
-   # plt.hist(num_pixels[3], color='blue', histtype='step', bins=np.linspace(0,256,50))
-   # plt.xlabel('# pixels in image')
-   # plt.ylabel('Counts')
-   # plt.show()
+   #plt.hist(num_pixels[1], color='red', histtype='step', bins=np.linspace(0,256,50))
+   #plt.hist(num_pixels[3], color='blue', histtype='step', bins=np.linspace(0,256,50))
+   #plt.xlabel('# pixels in image')
+   #plt.ylabel('Counts')
+   #plt.show()
 
    #Calculate conditional probability P(X|C)
    pdf_XC = defaultdict()
@@ -89,11 +89,11 @@ for digits in itertools.combinations(range(10), 2):
       pdf_XC[key], binedges = np.histogram(num_pixels[key], bins=range(256), density=True)
 
    # #Make histogram of the pdfs
-   # plt.hist(range(255), weights=pdf_XC[1], bins = np.linspace(0,256,50), histtype = 'step', color='red')
-   # plt.hist(range(255), weights=pdf_XC[3], bins = np.linspace(0,256,50), histtype = 'step', color='blue')
-   # plt.xlabel('# pixels in image')
-   # plt.ylabel('pdf')
-   # plt.show()
+   #plt.hist(range(255), weights=pdf_XC[1], bins = np.linspace(0,256,50), histtype = 'step', color='red')
+   #plt.hist(range(255), weights=pdf_XC[3], bins = np.linspace(0,256,50), histtype = 'step', color='blue')
+   #plt.xlabel('# pixels in image')
+   #plt.ylabel('pdf')
+   #plt.show()
 
    #calculate the probability for category C at every point P(C)
    pdf_C = defaultdict()
@@ -108,15 +108,13 @@ for digits in itertools.combinations(range(10), 2):
    for key in num_pixels.keys():
       pdf_CX[key] = pdf_XC[key] * pdf_C[key]
 
-   # plt.plot(range(255), pdf_CX[1], color='red')
-   # plt.plot(range(255), pdf_CX[3], color='blue')
-   # plt.xlabel('# pixels in image')
-   # plt.ylabel('P(C|X)')
-   # plt.show()
+   #plt.plot(range(255), pdf_CX[1], color='red')
+   #plt.plot(range(255), pdf_CX[3], color='blue')
+   #plt.xlabel('# pixels in image')
+   #plt.ylabel('P(C|X)')
+   #plt.show()
 
-   '''
-   Now we treat the case where both are zero, classify as the one category which dominates closest to this point
-   '''
+
    pdf_CX_temp = defaultdict(lambda: defaultdict())
    for i in range(255):
       if (pdf_CX[digits[0]][i] == pdf_CX[digits[1]][i]) & (pdf_CX[digits[0]][i] == 0):
@@ -132,19 +130,19 @@ for digits in itertools.combinations(range(10), 2):
          pdf_CX[key][i] = 1
 
    #Plot the new P(C|X), note that the normalisation is irrelevant here
-   # plt.plot(range(255), pdf_CX[1], color='red')
-   # plt.plot(range(255), pdf_CX[3], color='blue')
-   # plt.xlabel('# pixels in image')
-   # plt.ylabel('P(C|X)')
-   # plt.show()
+   #plt.plot(range(255), pdf_CX[1], color='red')
+   #plt.plot(range(255), pdf_CX[3], color='blue')
+   #plt.xlabel('# pixels in image')
+   #plt.ylabel('P(C|X)')
+   #plt.show()
 
 
-   '''
-   Now we try it on our test set.
-   First we select the part of the test set containing 1's and 3's
-   Then we calculate the number of pixels > -1 for each such image and classify according to whether P(1|num_pix) > or < P(3|num_pix)
-   Whenever P(1|num_pix) == P(3|num_pix) we randomly set it to each case with p = 0.5
-   '''
+'''
+   #Now we try it on our test set.
+   #First we select the part of the test set containing 1's and 3's
+   #Then we calculate the number of pixels > -1 for each such image and classify according to whether P(1|num_pix) > or < P(3|num_pix)
+   # Whenever P(1|num_pix) == P(3|num_pix) we randomly set it to each case with p = 0.5
+'''
 
    test_in_select = test_in[(test_out == digits[0]) | (test_out == digits[1])]
    test_out_select = test_out[(test_out == digits[0]) | (test_out == digits[1])]
@@ -168,3 +166,50 @@ for digits in itertools.combinations(range(10), 2):
 
 plt.pcolor(quality)
 plt.show()
+'''
+
+#Task 4
+
+def quality_measure(data_in, data_out, w):
+   d = -np.ones((10,len(data_in)))
+   for i in range(len(data_in)):
+      d[int(data_out[i]), i] = 1
+   
+   
+   y = w.T.dot(data_in.T)
+   idx = y*d > 0
+
+   percentage = float(np.sum(idx))/np.size(y) * 100.
+
+   correct = np.sum(((y*d)[d>0] > 0))/float(len(data_in))
+   false_positives = np.sum((y[d<0] > 0)) /(9*float(len(data_in)))
+      
+   return percentage, correct, false_positives
+
+
+w = np.random.rand(256,10)
+print("train:", quality_measure(train_in, train_out, w))
+print("test:", quality_measure(test_in, test_out, w))
+print("\\\\\\\\\\\\\\\\\\\\")
+eta = 0.01
+for j in range(10):
+   num = 0
+   for i, im in enumerate(train_in):
+      im = np.reshape(im, (256,1)).T
+      d = -np.ones(10)
+      d[int(train_out[i])] = 1
+
+      y = im.dot(w)[0]
+      idx = np.where(y*d < 0)[0]
+      num += len(idx)
+      w[:, idx] = w[:, idx] + eta * d[idx] * im.T
+   print("train:", quality_measure(train_in, train_out, w), num)
+
+   print("test:", quality_measure(test_in, test_out, w))
+   print("\\\\\\\\\\\\\\\\\\\\")
+
+
+
+
+
+
