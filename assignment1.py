@@ -166,50 +166,81 @@ for digits in itertools.combinations(range(10), 2):
 
 plt.pcolor(quality)
 plt.show()
-'''
+
 
 #Task 4
 
 def quality_measure(data_in, data_out, w):
-   d = -np.ones((10,len(data_in)))
+   d = np.zeros((10,len(data_in)))
    for i in range(len(data_in)):
       d[int(data_out[i]), i] = 1
    
    
    y = w.T.dot(data_in.T)
-   idx = y*d > 0
+   idx = (np.argmax(y, axis = 0) == data_out)
 
-   percentage = float(np.sum(idx))/np.size(y) * 100.
+   percentage = float(np.sum(idx))/len(data_out) * 100.
 
-   correct = np.sum(((y*d)[d>0] > 0))/float(len(data_in))
-   false_positives = np.sum((y[d<0] > 0)) /(9*float(len(data_in)))
+   #correct = np.sum(((y*d)[d>0] > 0))/float(len(data_in))
+   #false_positives = np.sum((y[d<0] > 0)) /(9*float(len(data_in)))
+   
+   print(np.sum((d - y)**2))
       
-   return percentage, correct, false_positives
+   return percentage#, correct, false_positives
 
 
-w = np.random.rand(256,10)
+w = np.random.rand(257,10)
+print(train_in.shape, np.ones(len(train_in)).reshape(-1,1).shape)
+train_in = np.append(train_in, np.ones(len(train_in)).reshape(-1,1), axis = 1)
+test_in = np.append(test_in, np.ones(len(test_in)).reshape(-1,1), axis = 1)
+print(train_in.shape)
 print("train:", quality_measure(train_in, train_out, w))
 print("test:", quality_measure(test_in, test_out, w))
 print("\\\\\\\\\\\\\\\\\\\\")
-eta = 0.01
-for j in range(10):
+eta = 0.0001
+for j in range(1000):
    num = 0
-   for i, im in enumerate(train_in):
-      im = np.reshape(im, (256,1)).T
-      d = -np.ones(10)
-      d[int(train_out[i])] = 1
-
+   permute = np.random.permutation(len(train_in))
+   train_in_temp = train_in[permute]
+   train_out_temp = train_out[permute]
+   #train_in_temp = train_in
+   #train_out_temp = train_out
+  
+   err = 0
+   for i, im in enumerate(train_in_temp):
+      im = np.reshape(im, (257,1)).T
+      d = np.zeros(10)
+      d[int(train_out_temp[i])] = 1
       y = im.dot(w)[0]
-      idx = np.where(y*d < 0)[0]
-      num += len(idx)
-      w[:, idx] = w[:, idx] + eta * d[idx] * im.T
-   print("train:", quality_measure(train_in, train_out, w), num)
+
+      if np.argmax(y) != int(train_out_temp[i]):
+         err += eta * np.matmul((d-y/y.max()).reshape(-1,1), im)
+
+      if (np.mod(i, len(train_in)/10) == 0) & (type(err) != int):
+      #if (type(err) != int):
+        w = w + err.T
+        err = 0
+   print("train:", quality_measure(train_in, train_out, w))
 
    print("test:", quality_measure(test_in, test_out, w))
    print("\\\\\\\\\\\\\\\\\\\\")
+'''
 
+#Task 5
+def sigmoid(x, a=1):
+   return 1 / (1 + np.exp(-a*x))   
 
-
+def xor_net(x1, x2, weights):
+   a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2])
+   a2 = sigmoid(x1*weights[3] + x2*weights[4] + weights[5])
+   output = sigmoid(a1*weights[6] + a2*weights[7] + weights[8])
+   return np.round(output)
+   
+def mse(weights):
+   for x in itertools.product(range(2), repeat=2):
+      print(xor_net(x[0], x[1], weights) - np.logical_xor(x[0], x[1]))
+mse(np.random.rand(9))
+   
 
 
 
