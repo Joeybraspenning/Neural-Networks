@@ -36,6 +36,8 @@ for i in range(len(np.unique(train_out))):
 
 #most difficult to seperate
 temp = dist
+print(np.unravel_index(temp.argmax(), temp.shape))
+
 temp[temp == 0] = 1e10
 print(np.unravel_index(temp.argmin(), temp.shape))
 
@@ -225,7 +227,6 @@ for j in range(1000):
    print("test:", quality_measure(test_in, test_out, w))
    print("\\\\\\\\\\\\\\\\\\\\")
 '''
-
 #Task 5
 def sigmoid(x, a=1):
    return 1 / (1 + np.exp(-a*x))   
@@ -234,13 +235,34 @@ def xor_net(x1, x2, weights):
    a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2])
    a2 = sigmoid(x1*weights[3] + x2*weights[4] + weights[5])
    output = sigmoid(a1*weights[6] + a2*weights[7] + weights[8])
-   return np.round(output)
+   return np.round(output), a1, a2
    
 def mse(weights):
+   se = 0
    for x in itertools.product(range(2), repeat=2):
-      print(xor_net(x[0], x[1], weights) - np.logical_xor(x[0], x[1]))
-mse(np.random.rand(9))
+      se += (xor_net(x[0], x[1], weights) - np.logical_xor(x[0], x[1]))**2
+   mse = np.mean(np.sqrt(se))
+   print(mse)
+
+def grdmse(weights):
+   y_min_d = xor_net(x[0], x[1], weights) - np.logical_xor(x[0], x[1])
+   d_net = xor_net(x[0], x[1], weights) * (1 - xor_net(x[0], x[1], weights))
+   d_net_a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2]) * (1 - sigmoid(x1*weights[0] + x2*weights[1] + weights[2]))
+   d_net_a2 = sigmoid(x1*weights[3] + x2*weights[4] + weights[5]) * (1 - sigmoid(x1*weights[3] + x2*weights[4] + weights[5]))
+   d8 = y_min_d * d_net
+   d7 = y_min_d * d_net * a2
+   d6 = y_min_d * d_net * a1
+   d5 = y_min_d * d_net * a2 * d_net_a2
+   d4 = y_min_d * d_net * a2 * d_net_a2 * x2
+   d3 = y_min_d * d_net * a2 * d_net_a2 * x1
+   d2 = y_min_d * d_net * a1 * d_net_a1
+   d1 = y_min_d * d_net * a1 * d_net_a1 * x2
+   d0 = y_min_d * d_net * a1 * d_net_a1 * x1
+
+   return np.array([d0, d1, d2, d3, d4, d5, d6, d7, d8])
+
    
+
 
 
 
