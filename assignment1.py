@@ -246,14 +246,13 @@ def mse(weights):
    return mse
 
 def grdmse(weights):
-   eps = 1
+   eps = 0.001
    grad = np.full(9, np.nan)
+   temp = np.tile(weights, (9, 1)) + np.diag(np.tile(eps, 9))
    for i in range(9):
-      temp = weights
-      temp[i] = temp[i] + eps
-      print(i, temp[i], weights[i])
-      print(mse(temp), mse(weights))
-      grad[i] = (mse(temp) - mse(weights))/ eps
+
+
+      grad[i] = (mse(temp[i]) - mse(weights))/ eps
 
 
    return grad
@@ -262,9 +261,9 @@ def grdmse(weights):
 weights = np.random.random(9)
 print(grdmse(weights))
 diff = 1
-eta = 0.001
+eta = 0.01
 tel = 0
-'''
+
 while np.abs(mse(weights)) > 0.001:
    tel +=1
    if np.mod(tel, 1000) == 0:
@@ -275,7 +274,7 @@ while np.abs(mse(weights)) > 0.001:
    weights = weights - eta * grad
 
 print(mse(weights))
-'''
+
 
 
 
