@@ -3,6 +3,7 @@ from sklearn import metrics
 from collections import defaultdict
 from matplotlib import pyplot as plt
 import itertools
+import time
 
 train_in = np.genfromtxt('./data/train_in.csv', delimiter=',')
 train_out = np.genfromtxt('./data/train_out.csv', delimiter=',')
@@ -235,33 +236,53 @@ def xor_net(x1, x2, weights):
    a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2])
    a2 = sigmoid(x1*weights[3] + x2*weights[4] + weights[5])
    output = sigmoid(a1*weights[6] + a2*weights[7] + weights[8])
-   return np.round(output), a1, a2
+   return output, a1, a2
    
 def mse(weights):
    se = 0
    for x in itertools.product(range(2), repeat=2):
       se += (xor_net(x[0], x[1], weights) - np.logical_xor(x[0], x[1]))**2
    mse = np.mean(np.sqrt(se))
-   print(mse)
+   return mse
 
 def grdmse(weights):
-   y_min_d = xor_net(x[0], x[1], weights) - np.logical_xor(x[0], x[1])
-   d_net = xor_net(x[0], x[1], weights) * (1 - xor_net(x[0], x[1], weights))
-   d_net_a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2]) * (1 - sigmoid(x1*weights[0] + x2*weights[1] + weights[2]))
-   d_net_a2 = sigmoid(x1*weights[3] + x2*weights[4] + weights[5]) * (1 - sigmoid(x1*weights[3] + x2*weights[4] + weights[5]))
-   d8 = y_min_d * d_net
-   d7 = y_min_d * d_net * a2
-   d6 = y_min_d * d_net * a1
-   d5 = y_min_d * d_net * a2 * d_net_a2
-   d4 = y_min_d * d_net * a2 * d_net_a2 * x2
-   d3 = y_min_d * d_net * a2 * d_net_a2 * x1
-   d2 = y_min_d * d_net * a1 * d_net_a1
-   d1 = y_min_d * d_net * a1 * d_net_a1 * x2
-   d0 = y_min_d * d_net * a1 * d_net_a1 * x1
+   eps = 1
+   grad = np.full(9, np.nan)
+   for i in range(9):
+      temp = weights
+      temp[i] = temp[i] + eps
+      print(i, temp[i], weights[i])
+      print(mse(temp), mse(weights))
+      grad[i] = (mse(temp) - mse(weights))/ eps
 
-   return np.array([d0, d1, d2, d3, d4, d5, d6, d7, d8])
 
-   
+   return grad
+
+
+weights = np.random.random(9)
+print(grdmse(weights))
+diff = 1
+eta = 0.001
+tel = 0
+'''
+while np.abs(mse(weights)) > 0.001:
+   tel +=1
+   if np.mod(tel, 1000) == 0:
+      print(tel)
+      print(mse(weights))
+      print(grad)
+   grad = grdmse(weights)
+   weights = weights - eta * grad
+
+print(mse(weights))
+'''
+
+
+
+
+
+
+
 
 
 
