@@ -236,7 +236,7 @@ def xor_net(x1, x2, weights):
    a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2])
    a2 = sigmoid(x1*weights[3] + x2*weights[4] + weights[5])
    output = sigmoid(a1*weights[6] + a2*weights[7] + weights[8])
-   return output, a1, a2
+   return output
    
 def mse(weights):
    se = 0
@@ -250,8 +250,6 @@ def grdmse(weights):
    grad = np.full(9, np.nan)
    temp = np.tile(weights, (9, 1)) + np.diag(np.tile(eps, 9))
    for i in range(9):
-
-
       grad[i] = (mse(temp[i]) - mse(weights))/ eps
 
 
@@ -270,6 +268,10 @@ while np.abs(mse(weights)) > 0.001:
       print(tel)
       print(mse(weights))
       print(grad)
+      print(np.round(xor_net(1, 1, weights)))
+      print(np.round(xor_net(1, 0, weights)))
+      print(np.round(xor_net(0, 1, weights)))
+      print(np.round(xor_net(0, 0, weights)))
    grad = grdmse(weights)
    weights = weights - eta * grad
 
