@@ -4,6 +4,15 @@ from collections import defaultdict
 from matplotlib import pyplot as plt
 import itertools
 import time
+import pickle
+
+def save_obj(obj, name ):
+    with open(name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_obj(name ):
+    with open(name + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 train_in = np.genfromtxt('./data/train_in.csv', delimiter=',')
 train_out = np.genfromtxt('./data/train_out.csv', delimiter=',')
@@ -228,6 +237,7 @@ for j in range(1000):
    print("test:", quality_measure(test_in, test_out, w))
    print("\\\\\\\\\\\\\\\\\\\\")
 '''
+'''
 #Task 5
 def sigmoid(x, a=1):
    return 1 / (1 + np.exp(-a*x))   
@@ -256,29 +266,66 @@ def grdmse(weights):
    return grad
 
 
-weights = np.random.random(9)
-print(grdmse(weights))
-diff = 1
 eta = 0.01
-tel = 0
+progress = {}
+num_mis = {}
+for i in range(20):
+   msqe = []
+   mis = []
+   weights = np.random.random(9)
+   err = 0
+   tel=0
+   for x in itertools.product(range(2), repeat=2):
+      err += (int(np.round(xor_net(x[0], x[1], weights))) - np.logical_xor(x[0], x[1]))**2
 
-while np.abs(mse(weights)) > 0.001:
-   tel +=1
-   if np.mod(tel, 1000) == 0:
-      print(tel)
-      print(mse(weights))
-      print(grad)
-      print(np.round(xor_net(1, 1, weights)))
-      print(np.round(xor_net(1, 0, weights)))
-      print(np.round(xor_net(0, 1, weights)))
-      print(np.round(xor_net(0, 0, weights)))
-   grad = grdmse(weights)
-   weights = weights - eta * grad
+   while err != 0:
+      tel +=1
+      msqe.append(mse(weights))
+      weights = weights - eta * grdmse(weights)
+      err = 0
+      for x in itertools.product(range(2), repeat=2):
+         err += (int(np.round(xor_net(x[0], x[1], weights))) - np.logical_xor(x[0], x[1]))**2
+      mis.append(err)
+      if tel > 1e6:
+         break
 
-print(mse(weights))
+   progress[i] = np.array(msqe)
+   num_mis[i] = np.array(mis)
+   print(tel)
+   for x in itertools.product(range(2), repeat=2):
+     print(i, '|||||', x[0], x[1], '---x_or = ', int(np.round(xor_net(x[0], x[1], weights))))
 
 
+save_obj(progress, 'progress')
+save_obj(num_mis, 'num_mis')
+'''
+from matplotlib import rcParams
+rcParams['font.family'] = 'Latin Modern Roman'
+progress = load_obj('progress')
+num_mis = load_obj('num_mis')
+print(np.max([np.max(num_mis[i]) for i in range(20)]))
+colors = ['#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE']
+fig, ax = plt.subplots(1,2)
+for i in range(20):
+   if len(progress[i]) < 5e5:
+      ax[0].plot(np.arange(0, len(progress[i])), progress[i], linewidth = 1.0, color = '#2934A3')
+      ax[1].plot(np.arange(0, len(progress[i])), num_mis[i], linewidth = 1.0, color = '#2934A3')
 
+
+ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+ax[1].set_yticks(np.arange(np.max([np.max(num_mis[i]) + 1 for i in range(20)])))
+ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
+ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
+
+ax[0].set_xlabel('Iteration', fontsize = 14)
+ax[1].set_xlabel('Iteration', fontsize = 14)
+ax[0].set_ylabel('MSE', fontsize = 14)
+ax[1].set_ylabel('Misclassified cases', fontsize = 14)
+ax[0].grid(True)
+ax[1].grid(True)
+plt.savefig('Task5')
+plt.show()
 
 
 
