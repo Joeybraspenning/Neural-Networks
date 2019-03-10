@@ -293,7 +293,7 @@ for i in range(20):
       mis.append(err)
       # if np.mod(tel, 1000) == 0:
       #    print(tel, end='\r')
-      if tel > 1e6:
+      if tel > 3e5:
          break
 
    progress[i] = np.array(msqe)
