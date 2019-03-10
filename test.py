@@ -13,78 +13,78 @@ def sigmoid(x, a=1):
 
 
 
-def MNIST_net(x, weights):
-   a = np.zeros((30, weights.shape[1]))
-   b = np.zeros((10, weights.shape[1]))
-
+def MNIST_net(x, weights_1, weights_2):
    '''
-   x = 256x1 input image vector
-   weights = 8049x1 input weights vector
+   x = 257x1 input image vector, the last element is the bias
+   OR 
+   x = 257xN input image matrix, the last elements are biases
+   weights_1 = 30x257 weights matrix
+   weights_2 = 10x31 weights matrix
    '''
-   for i in range(30):
-      a[i] = sigmoid(x.dot(weights[256*i:256*i+256]) + weights[7680+i]) #All 30 inputs + bias
+   a = sigmoid(weights_1.dot(x))
+   try:
+      b = sigmoid(weights_2.dot(np.append(a.T, np.ones(int(a.size/30)).reshape(-1,1), axis=1).T))
+   except IndexError:
+      b = sigmoid(weights_2.dot(np.append(a, 1)))
 
-
-
-   for j in range(10):
-      b[j] = sigmoid(np.diag(a.T.dot(weights[7710 + 30*j:7740 + 30*j])) + weights[8040+j])
    return np.argmax(b, axis=0)
 
 
 
-def mse(weights):
-   se = 0
-   for i, x in enumerate(train_in):
-      se += (MNIST_net(x, weights.reshape(-1,1)) - train_out[i])**2
-   mse = np.mean(np.sqrt(se))
+def mse(w1, w2):
+   mse = np.mean((MNIST_net(image_matrix, w1, w2) - train_out)**2)
    return mse
 
-def mse_one(weights, num):
-   se = (MNIST_net(train_in[num], weights) - train_out[num])**2
-   return np.sqrt(se)
 
 
-def grdmse(weights, num):
-   eps = 0.001
-   temp = np.repeat(weights.reshape(-1,1), 8050, axis=1) + eps*np.diag(np.ones(8050))
+def grdmse(weights_1, weights_2, temp1, temp2):
+   eps = 0.1
+   grad_1 = np.zeros(weights_1.size)
+   grad_2 = np.zeros(weights_2.size)
+   for i in range(weights_1.size + weights_2.size):
+      if i < weights_1.size:
+         grad_1[i] = (mse(weights_1 + eps*temp1[:,:,i], weights_2) - mse(weights_1, weights_2)) / eps
 
-   grad = (mse_one(temp, num) - mse_one(weights.reshape(-1,1), num))/eps
+      elif i > weights_1.size:
+         grad_2[i-weights_1.size] = (mse(weights_1, weights_2 + eps*temp2[:,:,i-weights_1.size]) - mse(weights_1, weights_2)) / eps
 
-  
-   # for i in range(8050):
-   #    grad[i] = (mse_one(temp[i], num) - mse_one(weights, num))/ eps
-
-
-   return grad
+   return grad_1, grad_2
 
 
 eta = 0.01
 
-weights = np.random.random(8050)
+weights_1 = np.random.random((30, 257))
+weights_2 = np.random.random((10, 31))
 err = 0
 tel=0
 
-print(mse(weights))
+temp1 = np.zeros((weights_1.shape[0], weights_1.shape[1], weights_1.size))
+temp2 = np.zeros((weights_2.shape[0], weights_2.shape[1], weights_2.size))
+for i in range(weights_1.size + weights_2.size):
+   if i < weights_1.size:
+      idx = np.unravel_index(i, weights_1.shape)
+      temp1[idx[0], idx[1], i] = 1
 
-for k in range(5):
-   for num in range(len(train_in)):
-      print(num)
-      weights = weights - eta*grdmse(weights, num)
-      
-   print(mse_one2(weights))
+   elif i > weights_1.size:
+      idx = np.unravel_index(i - weights_1.size, weights_2.shape)
+      temp2[idx[0], idx[1], i-weights_1.size] = 1
 
 
 
-'''
-while err != 0:
-   tel +=1
-   msqe.append(mse(weights))
-   weights = weights - eta * grdmse(weights)
-   err = 0
-   for x in itertools.product(range(2), repeat=2):
-      err += (int(np.round(xor_net(x[0], x[1], weights))) - np.logical_xor(x[0], x[1]))**2
-   mis.append(err)
-   if tel > 1e6:
-      break
 
-'''
+image_matrix = np.zeros((256, len(train_in)))
+for i in np.arange(len(train_in)):
+   image_matrix[:,i] = train_in[i]
+# Add a row on ones to the image matrix
+image_matrix = np.vstack((image_matrix, np.ones(len(train_in))))
+
+print(mse(weights_1, weights_2))
+accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2))/len(train_out)
+
+for i in range(5):
+   grad1, grad2 = grdmse(weights_1, weights_2, temp1, temp2)
+   weights_1 = weights_1 - eta*grad1.reshape(weights_1.shape)
+   weights_2 = weights_2 - eta*grad2.reshape(weights_2.shape)
+
+print(mse(weights_1, weights_2))
+accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2))/len(train_out)
