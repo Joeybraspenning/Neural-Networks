@@ -237,10 +237,16 @@ for j in range(1000):
    print("test:", quality_measure(test_in, test_out, w))
    print("\\\\\\\\\\\\\\\\\\\\")
 '''
-'''
+
 #Task 5
 def sigmoid(x, a=1):
-   return 1 / (1 + np.exp(-a*x))   
+   return 1 / (1 + np.exp(-a*x))  
+
+def relu(x):
+   if x < 0:
+      return 0
+   elif x >= 0:
+      return x
 
 def xor_net(x1, x2, weights):
    a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2])
@@ -266,7 +272,7 @@ def grdmse(weights):
    return grad
 
 
-eta = 0.01
+eta = 0.1
 progress = {}
 num_mis = {}
 for i in range(20):
@@ -277,7 +283,6 @@ for i in range(20):
    tel=0
    for x in itertools.product(range(2), repeat=2):
       err += (int(np.round(xor_net(x[0], x[1], weights))) - np.logical_xor(x[0], x[1]))**2
-
    while err != 0:
       tel +=1
       msqe.append(mse(weights))
@@ -286,6 +291,8 @@ for i in range(20):
       for x in itertools.product(range(2), repeat=2):
          err += (int(np.round(xor_net(x[0], x[1], weights))) - np.logical_xor(x[0], x[1]))**2
       mis.append(err)
+      # if np.mod(tel, 1000) == 0:
+      #    print(tel, end='\r')
       if tel > 1e6:
          break
 
@@ -296,36 +303,35 @@ for i in range(20):
      print(i, '|||||', x[0], x[1], '---x_or = ', int(np.round(xor_net(x[0], x[1], weights))))
 
 
-save_obj(progress, 'progress')
-save_obj(num_mis, 'num_mis')
-'''
-from matplotlib import rcParams
-rcParams['font.family'] = 'Latin Modern Roman'
-progress = load_obj('progress')
-num_mis = load_obj('num_mis')
-print(np.max([np.max(num_mis[i]) for i in range(20)]))
-colors = ['#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE']
-fig, ax = plt.subplots(1,2)
-for i in range(20):
-   if len(progress[i]) < 5e5:
-      ax[0].plot(np.arange(0, len(progress[i])), progress[i], linewidth = 1.0, color = '#2934A3')
-      ax[1].plot(np.arange(0, len(progress[i])), num_mis[i], linewidth = 1.0, color = '#2934A3')
+save_obj(progress, 'progress_sig_0.1')
+save_obj(num_mis, 'num_mis_sig_0.1')
+
+# from matplotlib import rcParams
+# rcParams['font.family'] = 'Latin Modern Roman'
+# progress = load_obj('progress')
+# num_mis = load_obj('num_mis')
+# print(np.max([np.max(num_mis[i]) for i in range(20)]))
+# colors = ['#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE']
+# fig, ax = plt.subplots(1,2)
+# for i in range(20):
+#    ax[0].plot(np.arange(0, len(progress[i])), progress[i], linewidth = 1.0, color = '#2934A3')
+#    ax[1].plot(np.arange(0, len(progress[i])), num_mis[i], linewidth = 1.0, color = '#2934A3')
 
 
-ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
-ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
-ax[1].set_yticks(np.arange(np.max([np.max(num_mis[i]) + 1 for i in range(20)])))
-ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
-ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
+# # ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+# # ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+# # ax[1].set_yticks(np.arange(np.max([np.max(num_mis[i]) + 1 for i in range(20)])))
+# # ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
+# # ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
 
-ax[0].set_xlabel('Iteration', fontsize = 14)
-ax[1].set_xlabel('Iteration', fontsize = 14)
-ax[0].set_ylabel('MSE', fontsize = 14)
-ax[1].set_ylabel('Misclassified cases', fontsize = 14)
-ax[0].grid(True)
-ax[1].grid(True)
-plt.savefig('Task5')
-plt.show()
+# ax[0].set_xlabel('Iteration', fontsize = 14)
+# ax[1].set_xlabel('Iteration', fontsize = 14)
+# ax[0].set_ylabel('MSE', fontsize = 14)
+# ax[1].set_ylabel('Misclassified cases', fontsize = 14)
+# ax[0].grid(True)
+# ax[1].grid(True)
+# plt.savefig('Task5.pdf')
+# plt.show()
 
 
 
