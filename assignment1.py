@@ -272,7 +272,7 @@ def grdmse(weights):
    return grad
 
 
-eta = 0.05
+eta = 0.5
 progress = {}
 num_mis = {}
 for i in range(20):
@@ -305,34 +305,51 @@ for i in range(20):
 
 save_obj(progress, 'progress_sig_0.05')
 save_obj(num_mis, 'num_mis_sig_0.05')
+'''
+from matplotlib import rcParams
+rcParams['font.family'] = 'Latin Modern Roman'
+progress = load_obj('progress')
+num_mis = load_obj('num_mis')
 
-# from matplotlib import rcParams
-# rcParams['font.family'] = 'Latin Modern Roman'
-# progress = load_obj('progress')
-# num_mis = load_obj('num_mis')
-# print(np.max([np.max(num_mis[i]) for i in range(20)]))
-# colors = ['#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE']
-# fig, ax = plt.subplots(1,2)
-# for i in range(20):
-#    ax[0].plot(np.arange(0, len(progress[i])), progress[i], linewidth = 1.0, color = '#2934A3')
-#    ax[1].plot(np.arange(0, len(progress[i])), num_mis[i], linewidth = 1.0, color = '#2934A3')
+progress_01 = load_obj('progress_sig_0.1')
+num_mis_01 = load_obj('num_mis_sig_0.1')
+
+progress_005 = load_obj('progress_sig_0.05')
+num_mis_005 = load_obj('num_mis_sig_0.05')
 
 
-# # ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
-# # ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
-# # ax[1].set_yticks(np.arange(np.max([np.max(num_mis[i]) + 1 for i in range(20)])))
-# # ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
-# # ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
+colors = ['#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE']
+fig, ax = plt.subplots(1,2)
+for i in range(20):
+   if len(progress_01[i]) < 2e5:
+      ax[0].plot(np.arange(0, len(progress_01[i])), progress_01[i], linewidth = 1.0, color = '#2934A3')
+      ax[1].plot(np.arange(0, len(progress_01[i])), num_mis_01[i], linewidth = 1.0, color = '#2934A3')
 
-# ax[0].set_xlabel('Iteration', fontsize = 14)
-# ax[1].set_xlabel('Iteration', fontsize = 14)
-# ax[0].set_ylabel('MSE', fontsize = 14)
-# ax[1].set_ylabel('Misclassified cases', fontsize = 14)
-# ax[0].grid(True)
-# ax[1].grid(True)
-# plt.savefig('Task5.pdf')
-# plt.show()
+for i in range(20):
+   if len(progress[i]) < 2e5:
+      ax[0].plot(np.arange(0, len(progress[i])), progress[i], linewidth = 1.0, color = '#808080')
+      ax[1].plot(np.arange(0, len(progress[i])), num_mis[i], linewidth = 1.0, color = '#808080')
 
+for i in range(20):
+   if len(progress_005[i]) < 2e5:
+      ax[0].plot(np.arange(0, len(progress_005[i])), progress_005[i], linewidth = 1.0, color = '#328080')
+      ax[1].plot(np.arange(0, len(progress_005[i])), num_mis_005[i], linewidth = 1.0, color = '#328080')
+
+# ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+# ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+ax[1].set_yticks([0,1,2,3])
+# ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
+# ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
+
+ax[0].set_xlabel('Iteration')
+ax[1].set_xlabel('Iteration')
+ax[0].set_ylabel('MSE')
+ax[1].set_ylabel('Misclassified cases')
+ax[0].grid(True)
+ax[1].grid(True)
+plt.savefig('Task5.pdf')
+plt.show()
+'''
 
 
 
