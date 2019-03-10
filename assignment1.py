@@ -272,7 +272,7 @@ def grdmse(weights):
    return grad
 
 
-eta = 0.1
+eta = 0.05
 progress = {}
 num_mis = {}
 for i in range(20):
