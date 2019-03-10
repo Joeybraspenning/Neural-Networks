@@ -303,8 +303,8 @@ for i in range(20):
      print(i, '|||||', x[0], x[1], '---x_or = ', int(np.round(xor_net(x[0], x[1], weights))))
 
 
-save_obj(progress, 'progress_sig_0.1')
-save_obj(num_mis, 'num_mis_sig_0.1')
+save_obj(progress, 'progress_sig_0.05')
+save_obj(num_mis, 'num_mis_sig_0.05')
 
 # from matplotlib import rcParams
 # rcParams['font.family'] = 'Latin Modern Roman'
