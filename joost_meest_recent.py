@@ -456,25 +456,20 @@ def train_network():
     for i in np.arange(len(train_in)):
         image_matrix[:,i] = train_in[i]
 
-    # Add a row of ones to the image matrix
+    # Add a row on ones to the image matrix
     image_matrix = np.vstack((image_matrix, np.ones(len(train_in))))
-
-    accuracy_list = np.zeros(N_iter)
 
     ############################################################################
     print('')
     print('TRAINING NETWORK...')
     print('')
-
-    for iter in np.arange(N_iter):
-
+    misclassified_items = range(len(train_in))
+    accuracy_list = []
+    while len(misclassified_items) > 0:
         accuracy, misclassified_items = compute_accuracy(weights_matrix, image_matrix, train_out)
-
-        # For each iteration store accuracy in list
-        accuracy_list[iter] = accuracy
-
-        print('Iteration: ' + str(iter) + ' -- Accuracy (%): ' + str(accuracy) + \
-              ' -- # Misclassified items: ' + str(len(misclassified_items)))
+        # print('Iteration: ' + str(iter) + ' -- Accuracy (%): ' + str(accuracy) + \
+              # ' -- # Misclassified items: ' + str(len(misclassified_items)))
+        accuracy_list.append(accuracy)
 
         for i in np.arange(len(train_in)):
 
@@ -494,13 +489,7 @@ def train_network():
 def task_4():
 
     weights_matrix, accuracy_list = train_network()
-
-    plt.figure()
-    plt.plot(accuracy_list)
-    plt.xlabel('# Iterations', size=12)
-    plt.ylabel('Accuracy', size=12)
-    plt.show()
-
+    plt.plot(range(len(accuracy_list)), accuracy_list, linewidth=0.5)
     image_matrix = np.zeros((256, len(test_in)))
     for i in np.arange(len(test_in)):
         image_matrix[:,i] = test_in[i]
@@ -514,12 +503,37 @@ def task_4():
     print('APPLYING NETWORK TO TEST DATA...')
     print('')
 
-    print('Accuracy (%): ' + str(accuracy) + \
+    print('Iteration: ' + str(iter) + ' -- Accuracy (%): ' + str(accuracy) + \
           ' -- # Misclassified items: ' + str(len(misclassified_items)))
+
+    return len(accuracy_list), accuracy
+
+def plot_task_4():
+  iterations = np.empty(100)
+  accuracy_test = np.empty(100)
+  for i in range(100):
+    iterations[i], accuracy_test[i] = task_4()
+  plt.xlabel('Iteration')
+  plt.ylabel('Accuracy (%)')
+  plt.savefig('Progress_plot.pdf')
+  plt.show()
+
+  plt.hist(iterations)
+  plt.xlabel('Iterations to convergence')
+  plt.ylabel('Counts')
+  plt.savefig('Iterations_hist.pdf')
+  plt.show()
+
+  plt.hist(accuracy_test)
+  plt.xlabel('Accuracy on Test set')
+  plt.ylabel('Counts')
+  plt.savefig('Test_accuracy.pdf')
+  plt.show()
 
 #plot_digits()
 #task_4()
-task_1()
+# task_1()
 #task_2()
 #task_3(data_set='test')
 #task_3(show_plots=False, data_set='test')
+plot_task_4()

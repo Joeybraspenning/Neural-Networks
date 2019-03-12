@@ -238,7 +238,7 @@ for j in range(1000):
    print("test:", quality_measure(test_in, test_out, w))
    print("\\\\\\\\\\\\\\\\\\\\")
 
-'''
+
 #Task 5
 def sigmoid(x, a=1):
    return 1 / (1 + np.exp(-a*x))  
@@ -311,89 +311,71 @@ for eta in [0.01, 0.1, 1.0, 10]:
 '''
 from matplotlib import rcParams
 rcParams['font.family'] = 'Latin Modern Roman'
-progress_001 = load_obj('progress_sig_0.01')
-num_mis_001 = load_obj('num_mis_sig_0.01')
 
-progress_01 = load_obj('progress_sig_0.1')
-num_mis_01 = load_obj('num_mis_sig_0.1')
-
-progress_005 = load_obj('progress_sig_0.05')
-num_mis_005 = load_obj('num_mis_sig_0.05')
-
-progress_05 = load_obj('progress_sig_0.5')
-num_mis_05 = load_obj('num_mis_sig_0.5')
-
-progress_1 = load_obj('progress_sig_1.0')
-num_mis_1 = load_obj('num_mis_sig_1.0')
-
-progress_2 = load_obj('progress_sig_2.0')
-num_mis_2 = load_obj('num_mis_sig_2.0')
-
-progress_4 = load_obj('progress_sig_2.0')
-num_mis_4 = load_obj('num_mis_sig_2.0')
-
-progress = {}
-num_mis = {}
-for eta in [0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 4.0, 10, 20, 40]:
-   progress[eta] = load_obj('progress_sig_{}'.format(eta))
-   num_mis[eta] = load_obj('num_mis_sig_{}'.format(eta))
+progress = defaultdict(lambda: defaultdict())
+num_mis = defaultdict(lambda: defaultdict())
+for name in ['sig', 'relu', 'tanh']:
+   for eta in [0.01, 0.1, 1.0, 10]:
+      progress[name][eta] = load_obj('progress_{}_{}'.format(name, eta))
+      num_mis[name][eta] = load_obj('num_mis_{}_{}'.format(name, eta))
 
 
-   # temp = np.full((20, int(1e5)), np.nan)
-   # temp_prog = np.full((20, int(1e5)), np.nan)
-   # for i in range(20):
-   #    if (len(progress[eta][i]) < 1e5) & (num_mis[eta][i][-1] == 0):
-   #       temp_prog[i, :len(progress[eta][i])] = progress[eta][i]
-   #       temp[i, :len(progress[eta][i])] = range(len(progress[eta][i]))
-   # all_max = np.nanmax(temp_prog)
-   # all_min = np.nanmin(temp_prog)
-   # steps = np.linspace(all_min, all_max, 101)
-   # diff = (steps[:-1], steps[1:])
-   # values = np.empty(len(diff[0]))
-   # for i, (left_edge, right_edge) in enumerate(zip(diff[0], diff[1])):
-   #    values[i] = np.nanmean(temp[(temp_prog > left_edge) & (temp_prog < right_edge)])
+for name in ['sig', 'relu', 'tanh']:
+   len_list = defaultdict(list)
+   fig, ax = plt.subplots(1,2, figsize=(20,10))
+   colors = ['#2934A3', '#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE', '#803E80', '#E8497A', '#FF690D']
+   for j, eta in enumerate([0.01, 0.1, 1.0, 10]):
+      tel = 0
+      for i in range(20):
+         if (len(progress[name][eta][i]) < 1e5) & (num_mis[name][eta][i][-1] == 0):
+
+            len_list[eta].append(len(progress[name][eta][i]))
+            tel +=1
+            ax[0].plot(np.arange(0, len(progress[name][eta][i])), progress[name][eta][i], linewidth = 0.5, color = colors[j], label = r'$\eta = {}$'.format(eta))
+            ax[1].plot(np.arange(0, len(progress[name][eta][i])), num_mis[name][eta][i], linewidth = 0.5, color = colors[j], label = r'$\eta = {}$'.format(eta))
+      print('{} For learning rate '.format(name), eta, 20-tel, 'did not converge in 1e5 iterations')
 
 
+   ax[0].set_xscale('log')
+   ax[1].set_xscale('log')
 
+   handles, labels = plt.gca().get_legend_handles_labels()
+   by_label = OrderedDict(zip(labels, handles))
+   plt.legend(by_label.values(), by_label.keys(), framealpha=0.5)
 
+   # ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+   # ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
+   ax[1].set_yticks([0,1,2,3])
+   # ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
+   # ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
 
-fig, ax = plt.subplots(1,2, figsize=(20,10))
-colors = ['#2934A3', '#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE', '#803E80', '#E8497A', '#FF690D']
-for j, eta in enumerate([0.01, 0.1, 1.0, 10]):
-   tel = 0
-   for i in range(20):
-      if (len(progress[eta][i]) < 1e5) & (num_mis[eta][i][-1] == 0):
-         tel +=1
-         ax[0].plot(np.arange(0, len(progress[eta][i])), progress[eta][i], linewidth = 0.5, color = colors[j], label = r'$\eta = {}$'.format(eta))
-         ax[1].plot(np.arange(0, len(progress[eta][i])), num_mis[eta][i], linewidth = 0.5, color = colors[j], label = r'$\eta = {}$'.format(eta))
-   print('For learning rate ', eta, 20-tel, 'did not converge in 1e5 iterations')
+   ax[0].set_xlabel('Iteration', fontsize = 20)
+   ax[1].set_xlabel('Iteration', fontsize = 20)
+   ax[0].set_ylabel('MSE', fontsize = 20)
+   ax[1].set_ylabel('Misclassified cases', fontsize = 20)
+   ax[0].grid(True)
+   ax[1].grid(True)
+   plt.savefig('Task5_{}.pdf'.format(name))
+   plt.savefig('Task5_{}.png'.format(name))
+   plt.show()
 
+   for j, eta in enumerate([0.01, 0.1, 1.0, 10]):
+      plt.hist(len_list[eta], color = colors[j], label = r'$\eta = {}$'.format(eta), bins = np.logspace(1.3, 5, 50))
 
-ax[0].set_xscale('log')
-ax[1].set_xscale('log')
+   plt.xlabel('Iterations to convergence')
+   plt.ylabel('Counts')
 
-handles, labels = plt.gca().get_legend_handles_labels()
-by_label = OrderedDict(zip(labels, handles))
-plt.legend(by_label.values(), by_label.keys(), framealpha=0.5)
+   plt.xscale('log')
 
-# ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
-# ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
-ax[1].set_yticks([0,1,2,3])
-# ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
-# ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
+   handles, labels = plt.gca().get_legend_handles_labels()
+   by_label = OrderedDict(zip(labels, handles))
+   plt.legend(by_label.values(), by_label.keys(), framealpha=0)
 
-ax[0].set_xlabel('Iteration', fontsize = 20)
-ax[1].set_xlabel('Iteration', fontsize = 20)
-ax[0].set_ylabel('MSE', fontsize = 20)
-ax[1].set_ylabel('Misclassified cases', fontsize = 20)
-ax[0].grid(True)
-ax[1].grid(True)
-plt.savefig('Task5_sig.pdf')
-plt.savefig('Task5_sig.png')
-plt.show()
+   plt.title('{}'.format(name), fontsize = 25)
 
-'''
-
+   plt.savefig('Task5_{}_hist.pdf'.format(name))
+   plt.savefig('Task5_{}_hist.png'.format(name))
+   plt.show()
 
 
 

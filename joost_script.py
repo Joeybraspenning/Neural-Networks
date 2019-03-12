@@ -253,7 +253,7 @@ def task_3(show_plots=False, data_set='test'):
        quality[digits[0], digits[1]] = float(np.sum(test_out_select == classification))/len(test_out_select)
        quality[digits[1], digits[0]] = float(np.sum(test_out_select == classification))/len(test_out_select)
 
-       print(data_set + ' {}, {}: {:.2f}% correctly classified'.format(digits[0], digits[1], float(np.sum(test_out_select != classification))/len(test_out_select) * 100))
+       print(data_set + ' {}, {}: {:.2f}% correctly classified'.format(digits[0], digits[1], float(np.sum(test_out_select == classification))/len(test_out_select) * 100))
 
     # Make plots
     xx, yy = np.meshgrid(np.linspace(-0.5, 9.5, 11),np.linspace(-0.5, 9.5, 11))
@@ -324,12 +324,13 @@ def train_network():
     print('')
     print('TRAINING NETWORK...')
     print('')
-
-    for iter in np.arange(N_iter):
-
+    misclassified_items = range(len(train_in))
+    accuracy_list = []
+    while len(misclassified_items) > 0:
         accuracy, misclassified_items = compute_accuracy(weights_matrix, image_matrix, train_out)
         print('Iteration: ' + str(iter) + ' -- Accuracy (%): ' + str(accuracy) + \
               ' -- # Misclassified items: ' + str(len(misclassified_items)))
+        accuracy_list.append(accuracy)
 
         for i in np.arange(len(train_in)):
 
@@ -343,12 +344,12 @@ def train_network():
                 weights_matrix[mask, :] = weights_matrix[mask, :] - eta*image_matrix[:,i]
                 weights_matrix[true_number, :] = weights_matrix[true_number, :] + eta*image_matrix[:,i]
 
-    return weights_matrix
+    return weights_matrix, accuracy_list
 
 def task_4():
 
-    weights_matrix = train_network()
-
+    weights_matrix, accuracy_list = train_network()
+    plt.plot(range(len(accuracy_list)), accuracy_list, linewidth=0.5)
     image_matrix = np.zeros((256, len(test_in)))
     for i in np.arange(len(test_in)):
         image_matrix[:,i] = test_in[i]
@@ -365,9 +366,34 @@ def task_4():
     print('Iteration: ' + str(iter) + ' -- Accuracy (%): ' + str(accuracy) + \
           ' -- # Misclassified items: ' + str(len(misclassified_items)))
 
+    return len(accuracy_list), accuracy
 
-task_4()
-#task_1()
-#task_2()
-#task_3(data_set='test')
-#task_3(data_set='train')
+def plot_task_4():
+  iterations = np.empty(100)
+  accuracy_test = np.empty(100)
+  for i in range(100):
+    iterations[i], accuracy_test[i] = task_4()
+  plt.xlabel('Iteration')
+  plt.ylabel('Accuracy (%)')
+  plt.savefig('Progress_plot.pdf')
+  plt.show()
+
+  plt.hist(iterations)
+  plt.xlabel('Iterations to convergence')
+  plt.ylabel('Counts')
+  plt.savefig('Iterations_hist.pdf')
+  plt.show()
+
+  plt.scatter(iterations, accuracy_test)
+  plt.xlabel('Iteration to convergence')
+  plt.ylabel('Accuracy on test set')
+  plt.savefig('Test_accuracy.pdf')
+  plt.show()
+
+
+
+plot_task_4()
+# task_1()
+# task_2()
+# task_3(show_plots = False, data_set='test')
+# task_3(show_plots = True, data_set='train')
