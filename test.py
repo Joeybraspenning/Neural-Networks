@@ -96,26 +96,25 @@ def mse_logcrossentropy(w1, w2, image_in, image_out):
    return  -log1 + log2
 
 
-def grdmse(weights_1, weights_2, temp1, temp2, image_in, image_out):
+def grdmse(weights_1, weights_2, temp1, temp2, image_in, image_out, eps1, eps2):
    eps = 0.01
    grad_1 = np.zeros(weights_1.shape)
    grad_2 = np.zeros(weights_2.shape)
    for i in range(weights_1.size + weights_2.size):
       if i < weights_1.size:
-         grad_1[np.unravel_index(i, grad_1.shape)] = (mse_logcrossentropy(weights_1 + eps*temp1[:,:,i], weights_2, image_in, image_out) - mse_logcrossentropy(weights_1, weights_2, image_in, image_out)) / eps
+         grad_1[np.unravel_index(i, grad_1.shape)] = (mse_logcrossentropy(weights_1 + eps1[np.unravel_index(i, grad_1.shape)]*temp1[:,:,i], weights_2, image_in, image_out) - mse_logcrossentropy(weights_1, weights_2, image_in, image_out)) / eps
 
       elif i > weights_1.size:
-         grad_2[np.unravel_index(i-weights_1.size, grad_2.shape)] = (mse_logcrossentropy(weights_1, weights_2 + eps*temp2[:,:,i-weights_1.size], image_in, image_out) - mse_logcrossentropy(weights_1, weights_2, image_in, image_out)) / eps
+         grad_2[np.unravel_index(i-weights_1.size, grad_2.shape)] = (mse_logcrossentropy(weights_1, weights_2 + eps2[np.unravel_index(i-weights_1.size, grad_2.shape)]*temp2[:,:,i-weights_1.size], image_in, image_out) - mse_logcrossentropy(weights_1, weights_2, image_in, image_out)) / eps
 
    return grad_1, grad_2
 
 
-eta = 0.01
 
 weights_1 = 2*np.random.random((30, 257)) - 1
 weights_2 = 2*np.random.random((10, 31)) - 1
 
-
+'''
 temp1 = np.zeros((weights_1.shape[0], weights_1.shape[1], weights_1.size))
 temp2 = np.zeros((weights_2.shape[0], weights_2.shape[1], weights_2.size))
 for i in range(weights_1.size + weights_2.size):
@@ -126,6 +125,7 @@ for i in range(weights_1.size + weights_2.size):
    elif i > weights_1.size:
       idx = np.unravel_index(i - weights_1.size, weights_2.shape)
       temp2[idx[0], idx[1], i-weights_1.size] = 1
+'''
 
 
 
@@ -136,14 +136,17 @@ for i in np.arange(len(train_in)):
 # Add a row on ones to the image matrix
 image_matrix = np.vstack((image_matrix, np.ones(len(train_in))))
 
-print('MSE_old = ', mse(weights_1, weights_2, image_matrix, train_out))
-print('Cross entropy = ', mse_logcrossentropy(weights_1, weights_2, image_matrix, train_out))
-accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2)[0])/len(train_out)
-print('Accuracy = ', accuracy)
-
+# print('MSE_old = ', mse(weights_1, weights_2, image_matrix, train_out))
+# print('Cross entropy = ', mse_logcrossentropy(weights_1, weights_2, image_matrix, train_out))
+# accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2)[0])/len(train_out)
+# print('Accuracy = ', accuracy)
+'''
 image_input = np.array_split(image_matrix, 10, axis=1)
 image_output = np.array_split(train_out, 10)
 
+
+eta = 0.01
+eps = 0.01
 # for j in range(5):
 #    image_input = np.array_split(image_matrix[:, np.random.permutation(image_matrix.shape[1])], 10, axis=1)
 #    image_output = np.array_split(train_out[np.random.permutation(train_out.shape[0])], 10)
@@ -152,9 +155,11 @@ image_output = np.array_split(train_out, 10)
 #       weights_1 = weights_1 - eta*grad1
 #       weights_2 = weights_2 - eta*grad2
 # for j in range(10):
-#    grad1, grad2 = grdmse(weights_1, weights_2, temp1, temp2, image_matrix, train_out)
-#    weights_1 = weights_1 - eta*grad1
-#    weights_2 = weights_2 - eta*grad2
+#    eps1 = np.abs(np.random.normal(eps, 5*eps, weights_1.shape))
+#    eps2 = np.abs(np.random.normal(eps, 5*eps, weights_2.shape))
+#    grad1, grad2 = grdmse(weights_1, weights_2, temp1, temp2, image_matrix, train_out, eps1, eps2)
+#    weights_1 = weights_1 - eta*grad1*eps1/0.01
+#    weights_2 = weights_2 - eta*grad2*eps2/0.01
 
 
 #    print('MSE_old = ', mse(weights_1, weights_2, image_matrix, train_out))
@@ -162,7 +167,7 @@ image_output = np.array_split(train_out, 10)
 #    accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2)[0])/len(train_out)
 #    print('Accuracy = ', accuracy)
 
-
+'''
 test_matrix = np.zeros((256, len(test_in)))
 for i in np.arange(len(test_in)):
    test_matrix[:,i] = test_in[i]
@@ -170,32 +175,28 @@ for i in np.arange(len(test_in)):
 test_matrix = np.vstack((test_matrix, np.ones(len(test_in))))
 
 
-b_max, b, a = MNIST_net(image_matrix, weights_1, weights_2)
-print(np.max(b, axis=0), np.sort(b, axis=0)[-2, :])
+# b_max, b, a = MNIST_net(image_matrix, weights_1, weights_2)
+# print(np.max(b, axis=0), np.sort(b, axis=0)[-2, :])
 
 eta = 1e-1
-for j in range(50):
-   tel = 0
-   for i in range(len(train_out)):
-      grad1, grad2 = mse_backprop(weights_1, weights_2, image_matrix[:, i], train_out[i])
-      weights_1 -=  eta*grad1
-      weights_2 -=  eta*grad2
-      if ((np.sum(grad1) == 0) & (np.sum(grad2) == 0)):
-         tel += 1
+tel = 0
+for j in range(10):
+   weights_1 = 2*np.random.random((30, 257)) - 1
+   weights_2 = 2*np.random.random((10, 31)) - 1
+   accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2)[0])/len(train_out)
+
+   while accuracy != 100:
+
+      for i in range(len(train_out)):
+         grad1, grad2 = mse_backprop(weights_1, weights_2, image_matrix[:, i], train_out[i])
+         weights_1 -=  eta*grad1
+         weights_2 -=  eta*grad2
+   
+      accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2)[0])/len(train_out)
 
 
-
-   # print('MSE_old = ', mse(weights_1, weights_2, image_matrix, train_out))
-   # print('Cross entropy = ', mse_logcrossentropy(weights_1, weights_2, image_matrix, train_out))
    accuracy = 100*np.sum(train_out == MNIST_net(image_matrix, weights_1, weights_2)[0])/len(train_out)
    print('Accuracy = ', accuracy)
-   # print("tel accuracy = ", tel / len(train_out))
 
-   # b_max, b, a = MNIST_net(image_matrix, weights_1, weights_2)
-   # print(np.max(b, axis=0), np.sort(b, axis=0)[-2, :], np.array([b[m, p] for p, m in enumerate(train_out)]))
-
-
-
-
-   accuracy = 100*np.sum(test_out == MNIST_net(test_matrix, weights_1, weights_2)[0])/len(test_out)
-   print('Test Accuracy = ', accuracy)
+   accuracy_test = 100*np.sum(test_out == MNIST_net(test_matrix, weights_1, weights_2)[0])/len(test_out)
+   print('Test Accuracy = ', accuracy_test)
