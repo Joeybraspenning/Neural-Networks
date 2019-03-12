@@ -249,10 +249,13 @@ def relu(x):
    elif x >= 0:
       return x
 
+def tanh(x):
+   return np.tanh(x)
+
 def xor_net(x1, x2, weights):
-   a1 = relu(x1*weights[0] + x2*weights[1] + weights[2])
-   a2 = relu(x1*weights[3] + x2*weights[4] + weights[5])
-   output = relu(a1*weights[6] + a2*weights[7] + weights[8])
+   a1 = tanh(x1*weights[0] + x2*weights[1] + weights[2])
+   a2 = tanh(x1*weights[3] + x2*weights[4] + weights[5])
+   output = tanh(a1*weights[6] + a2*weights[7] + weights[8])
    return output
    
 def mse(weights):
