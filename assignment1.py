@@ -250,9 +250,9 @@ def relu(x):
       return x
 
 def xor_net(x1, x2, weights):
-   a1 = sigmoid(x1*weights[0] + x2*weights[1] + weights[2])
-   a2 = sigmoid(x1*weights[3] + x2*weights[4] + weights[5])
-   output = sigmoid(a1*weights[6] + a2*weights[7] + weights[8])
+   a1 = relu(x1*weights[0] + x2*weights[1] + weights[2])
+   a2 = relu(x1*weights[3] + x2*weights[4] + weights[5])
+   output = relu(a1*weights[6] + a2*weights[7] + weights[8])
    return output
    
 def mse(weights):
@@ -272,7 +272,7 @@ def grdmse(weights):
 
    return grad
 
-for eta in [10, 20, 40]:
+for eta in [0.01, 0.1, 1.0, 10]:
    progress = {}
    num_mis = {}
    for i in range(20):
@@ -303,8 +303,8 @@ for eta in [10, 20, 40]:
         print(i, '|||||', x[0], x[1], '---x_or = ', int(np.round(xor_net(x[0], x[1], weights))))
 
 
-   save_obj(progress, 'progress_sig_{}'.format(eta))
-   save_obj(num_mis, 'num_mis_sig_{}'.format(eta))
+   save_obj(progress, 'progress_relu_{}'.format(eta))
+   save_obj(num_mis, 'num_mis_relu_{}'.format(eta))
 '''
 from matplotlib import rcParams
 rcParams['font.family'] = 'Latin Modern Roman'
@@ -329,74 +329,49 @@ num_mis_2 = load_obj('num_mis_sig_2.0')
 progress_4 = load_obj('progress_sig_2.0')
 num_mis_4 = load_obj('num_mis_sig_2.0')
 
-
-colors = ['#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE']
-fig, ax = plt.subplots(1,2)
-tel = 0
-for i in range(20):
-   if len(progress_01[i]) < 1e5:
-      tel +=1
-      ax[0].plot(np.arange(0, len(progress_01[i])), progress_01[i], linewidth = 0.5, color = '#2934A3', label = r'$\eta = 0.1$')
-      ax[1].plot(np.arange(0, len(progress_01[i])), num_mis_01[i], linewidth = 0.5, color = '#2934A3', label = r'$\eta = 0.1$')
-print('0.1', tel)
+progress = {}
+num_mis = {}
+for eta in [0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 4.0, 10, 20, 40]:
+   progress[eta] = load_obj('progress_sig_{}'.format(eta))
+   num_mis[eta] = load_obj('num_mis_sig_{}'.format(eta))
 
 
-tel = 0
-for i in range(20):
-   if len(progress_001[i]) < 1e5:
-      tel +=1
-      ax[0].plot(np.arange(0, len(progress_001[i])), progress_001[i], linewidth = 0.5, color = '#808080', label = r'$\eta = 0.01$')
-      ax[1].plot(np.arange(0, len(progress_001[i])), num_mis_001[i], linewidth = 0.5, color = '#808080', label = r'$\eta = 0.01$')
-print('0.01', tel)
+   # temp = np.full((20, int(1e5)), np.nan)
+   # temp_prog = np.full((20, int(1e5)), np.nan)
+   # for i in range(20):
+   #    if (len(progress[eta][i]) < 1e5) & (num_mis[eta][i][-1] == 0):
+   #       temp_prog[i, :len(progress[eta][i])] = progress[eta][i]
+   #       temp[i, :len(progress[eta][i])] = range(len(progress[eta][i]))
+   # all_max = np.nanmax(temp_prog)
+   # all_min = np.nanmin(temp_prog)
+   # steps = np.linspace(all_min, all_max, 101)
+   # diff = (steps[:-1], steps[1:])
+   # values = np.empty(len(diff[0]))
+   # for i, (left_edge, right_edge) in enumerate(zip(diff[0], diff[1])):
+   #    values[i] = np.nanmean(temp[(temp_prog > left_edge) & (temp_prog < right_edge)])
 
 
-tel = 0
-for i in range(20):
-   if len(progress_005[i]) < 1e5:
-      tel +=1
-      ax[0].plot(np.arange(0, len(progress_005[i])), progress_005[i], linewidth = 0.5, color = '#808032', label = r'$\eta = 0.05$')
-      ax[1].plot(np.arange(0, len(progress_005[i])), num_mis_005[i], linewidth = 0.5, color = '#808032', label = r'$\eta = 0.05$')
-print('0.05', tel)
 
 
-tel = 0
-for i in range(20):
-   if len(progress_05[i]) < 1e5:
-      tel +=1
-      ax[0].plot(np.arange(0, len(progress_05[i])), progress_05[i], linewidth = 0.5, color = '#80BE80', label = r'$\eta = 0.5$')
-      ax[1].plot(np.arange(0, len(progress_05[i])), num_mis_05[i], linewidth = 0.5, color = '#80BE80', label = r'$\eta = 0.5$')
-print('0.5', tel)
 
-tel = 0
-for i in range(20):
-   if len(progress_1[i]) < 1e5:
-      tel +=1
-      ax[0].plot(np.arange(0, len(progress_1[i])), progress_1[i], linewidth = 0.5, color = '#8080BE', label = r'$\eta = 1.0$')
-      ax[1].plot(np.arange(0, len(progress_1[i])), num_mis_1[i], linewidth = 0.5, color = '#8080BE', label = r'$\eta = 1.0$')
-print('1.0', tel)
+fig, ax = plt.subplots(1,2, figsize=(20,10))
+colors = ['#2934A3', '#808080', '#BE8080', '#328080', '#80BE80', '#808032', '#8080BE', '#803E80', '#E8497A', '#FF690D']
+for j, eta in enumerate([0.01, 0.1, 1.0, 10]):
+   tel = 0
+   for i in range(20):
+      if (len(progress[eta][i]) < 1e5) & (num_mis[eta][i][-1] == 0):
+         tel +=1
+         ax[0].plot(np.arange(0, len(progress[eta][i])), progress[eta][i], linewidth = 0.5, color = colors[j], label = r'$\eta = {}$'.format(eta))
+         ax[1].plot(np.arange(0, len(progress[eta][i])), num_mis[eta][i], linewidth = 0.5, color = colors[j], label = r'$\eta = {}$'.format(eta))
+   print('For learning rate ', eta, 20-tel, 'did not converge in 1e5 iterations')
 
-tel = 0
-for i in range(20):
-   if len(progress_2[i]) < 1e5:
-      tel +=1
-      ax[0].plot(np.arange(0, len(progress_2[i])), progress_2[i], linewidth = 0.5, color = '#FF8080', label = r'$\eta = 2.0$')
-      ax[1].plot(np.arange(0, len(progress_2[i])), num_mis_2[i], linewidth = 0.5, color = '#FF8080', label = r'$\eta = 2.0$')
-print('2.0', tel)
-
-tel = 0
-for i in range(20):
-   if len(progress_4[i]) < 1e5:
-      tel +=1
-      ax[0].plot(np.arange(0, len(progress_4[i])), progress_4[i], linewidth = 0.5, color = '#803E80', label = r'$\eta = 4.0$')
-      ax[1].plot(np.arange(0, len(progress_4[i])), num_mis_4[i], linewidth = 0.5, color = '#803E80', label = r'$\eta = 4.0$')
-print('4.0', tel)
 
 ax[0].set_xscale('log')
 ax[1].set_xscale('log')
 
 handles, labels = plt.gca().get_legend_handles_labels()
 by_label = OrderedDict(zip(labels, handles))
-plt.legend(by_label.values(), by_label.keys())
+plt.legend(by_label.values(), by_label.keys(), framealpha=0.5)
 
 # ax[0].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
 # ax[1].set_xlim([0, np.max([len(num_mis[i]) + 1 for i in range(20) if len(num_mis[i]) < 5e5])])
@@ -404,14 +379,14 @@ ax[1].set_yticks([0,1,2,3])
 # ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
 # ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
 
-ax[0].set_xlabel('Iteration')
-ax[1].set_xlabel('Iteration')
-ax[0].set_ylabel('MSE')
-ax[1].set_ylabel('Misclassified cases')
+ax[0].set_xlabel('Iteration', fontsize = 20)
+ax[1].set_xlabel('Iteration', fontsize = 20)
+ax[0].set_ylabel('MSE', fontsize = 20)
+ax[1].set_ylabel('Misclassified cases', fontsize = 20)
 ax[0].grid(True)
 ax[1].grid(True)
-plt.savefig('Task5_relu.pdf')
-plt.savefig('Task5_relu.png')
+plt.savefig('Task5_sig.pdf')
+plt.savefig('Task5_sig.png')
 plt.show()
 
 '''
