@@ -306,8 +306,8 @@ for eta in [0.01, 0.1, 1.0, 10]:
         print(i, '|||||', x[0], x[1], '---x_or = ', int(np.round(xor_net(x[0], x[1], weights))))
 
 
-   save_obj(progress, 'progress_relu_{}'.format(eta))
-   save_obj(num_mis, 'num_mis_relu_{}'.format(eta))
+   save_obj(progress, 'progress_tanh_{}'.format(eta))
+   save_obj(num_mis, 'num_mis_tanh_{}'.format(eta))
 '''
 from matplotlib import rcParams
 rcParams['font.family'] = 'Latin Modern Roman'
