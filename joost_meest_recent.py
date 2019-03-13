@@ -459,17 +459,26 @@ def train_network():
     # Add a row on ones to the image matrix
     image_matrix = np.vstack((image_matrix, np.ones(len(train_in))))
 
+    image_matrix_test = np.zeros((256, len(test_in)))
+    for i in np.arange(len(test_in)):
+        image_matrix_test[:,i] = test_in[i]
+
+    # Add a row on ones to the image matrix
+    image_matrix_test = np.vstack((image_matrix_test, np.ones(len(test_in))))
+
     ############################################################################
     print('')
     print('TRAINING NETWORK...')
     print('')
-    misclassified_items = range(len(train_in))
-    accuracy_list = []
+    misclassified_items, misclassified_items_test = range(len(train_in)), range(len(test_in))
+    accuracy_list, accuracy_list_test = [],  []
     while len(misclassified_items) > 0:
         accuracy, misclassified_items = compute_accuracy(weights_matrix, image_matrix, train_out)
+        accuracy_test, misclassified_items_test = compute_accuracy(weights_matrix, image_matrix_test, test_out)
         # print('Iteration: ' + str(iter) + ' -- Accuracy (%): ' + str(accuracy) + \
               # ' -- # Misclassified items: ' + str(len(misclassified_items)))
         accuracy_list.append(accuracy)
+        accuracy_list_test.append(accuracy_test)
 
         for i in np.arange(len(train_in)):
 
@@ -483,13 +492,14 @@ def train_network():
                 weights_matrix[mask, :] = weights_matrix[mask, :] - eta*image_matrix[:,i]
                 weights_matrix[true_number, :] = weights_matrix[true_number, :] + eta*image_matrix[:,i]
 
-    return weights_matrix, accuracy_list
+    return weights_matrix, accuracy_list, accuracy_list_test
 
 
-def task_4():
+def task_4(ax):
 
-    weights_matrix, accuracy_list = train_network()
-    plt.plot(range(len(accuracy_list)), accuracy_list, linewidth=0.5)
+    weights_matrix, accuracy_list, accuracy_list_test = train_network()
+    ax[0].plot(range(len(accuracy_list)), accuracy_list, linewidth=0.5)
+    ax[1].plot(range(len(accuracy_list_test)), accuracy_list_test, linewidth=0.5)
     image_matrix = np.zeros((256, len(test_in)))
     for i in np.arange(len(test_in)):
         image_matrix[:,i] = test_in[i]
@@ -509,24 +519,28 @@ def task_4():
     return len(accuracy_list), accuracy
 
 def plot_task_4():
+  from matplotlib import rcParams
+  rcParams['font.family'] = 'Latin Modern Roman'
   iterations = np.empty(100)
   accuracy_test = np.empty(100)
+  fig, ax = plt.subplots(2, 1)
   for i in range(100):
-    iterations[i], accuracy_test[i] = task_4()
-  plt.xlabel('Iteration')
-  plt.ylabel('Accuracy (%)')
+    iterations[i], accuracy_test[i] = task_4(ax)
+  ax[1].set_xlabel('Iteration', fontsize=15)
+  ax[0].set_ylabel('Accuracy Train (%)', fontsize=14)
+  ax[1].set_ylabel('Accuracy Test (%)', fontsize=14)
   plt.savefig('Progress_plot.pdf')
   plt.show()
 
   plt.hist(iterations)
   plt.xlabel('Iterations to convergence')
-  plt.ylabel('Counts')
-  plt.savefig('Iterations_hist.pdf')
+  plt.ylabel('Counts', fontsize=15)
+  plt.savefig('Iterations_hist.pdf', fontsize=15)
   plt.show()
 
   plt.hist(accuracy_test)
-  plt.xlabel('Accuracy on Test set')
-  plt.ylabel('Counts')
+  plt.xlabel('Accuracy on Test set', fontsize=15)
+  plt.ylabel('Counts', fontsize = 15)
   plt.savefig('Test_accuracy.pdf')
   plt.show()
 

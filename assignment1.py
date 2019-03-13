@@ -349,10 +349,18 @@ for name in ['sig', 'relu', 'tanh']:
    # ax[0].set_xticks([0, 20000, 40000, 60000, 80000])
    # ax[1].set_xticks([0, 20000, 40000, 60000, 80000])
 
-   ax[0].set_xlabel('Iteration', fontsize = 20)
-   ax[1].set_xlabel('Iteration', fontsize = 20)
-   ax[0].set_ylabel('MSE', fontsize = 20)
-   ax[1].set_ylabel('Misclassified cases', fontsize = 20)
+   fig.text(0.5, 0.01, 'Iteration', ha='center', fontsize = 60)
+
+   # ax[0].set_xlabel('Iteration', fontsize = 20)
+   # ax[1].set_xlabel('Iteration', fontsize = 20)
+   ax[0].set_ylabel('MSE', fontsize = 60)
+   ax[1].set_ylabel('Misclassified cases', fontsize = 60)
+
+   ax[0].xaxis.set_tick_params(labelsize=35)
+   ax[1].xaxis.set_tick_params(labelsize=35)
+   ax[0].yaxis.set_tick_params(labelsize=35)
+   ax[1].yaxis.set_tick_params(labelsize=35)
+
    ax[0].grid(True)
    ax[1].grid(True)
    plt.savefig('Task5_{}.pdf'.format(name))
