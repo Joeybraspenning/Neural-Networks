@@ -370,8 +370,10 @@ for name in ['sig', 'relu', 'tanh']:
    for j, eta in enumerate([0.01, 0.1, 1.0, 10]):
       plt.hist(len_list[eta], color = colors[j], label = r'$\eta = {}$'.format(eta), bins = np.logspace(1.3, 5, 50))
 
-   plt.xlabel('Iterations to convergence')
-   plt.ylabel('Counts')
+   plt.xlabel('Iterations to convergence', fontsize = 18)
+   plt.ylabel('Counts', fontsize = 18)
+
+   plt.tick_params('both', labelsize=14)
 
    plt.xscale('log')
 
@@ -381,6 +383,7 @@ for name in ['sig', 'relu', 'tanh']:
 
    plt.title('{}'.format(name), fontsize = 25)
 
+   plt.tight_layout()
    plt.savefig('Task5_{}_hist.pdf'.format(name))
    plt.savefig('Task5_{}_hist.png'.format(name))
    plt.show()
