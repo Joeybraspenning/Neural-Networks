@@ -1,9 +1,14 @@
 from __future__ import print_function
 from keras.models import Sequential
 from keras import layers
+from keras import callbacks
+from keras.callbacks import CSVLogger
 import numpy as np
 from six.moves import range
 
+################################################################################
+################################################################################
+################################################################################
 
 class CharacterTable(object):
     """Given a set of characters:
@@ -47,16 +52,49 @@ class CharacterTable(object):
             x = x.argmax(axis=-1)
         return ''.join(self.indices_char[x] for x in x)
 
+################################################################################
+################################################################################
+################################################################################
+
+def generate_data_set(n_items, input_len, n_decimals):
+
+    while len(questions) < n_items:
+
+        # Sample numbers uniformly in log space
+        exp = np.random.uniform(1,input_len-0.1)
+        number = int(10**exp)
+
+        # Skip the number if it has been encounterd before
+        if number in seen:
+            continue
+        seen.add(number)
+
+        # Build the input and output strings
+        ans = ('{:.'+str(n_decimals)+'e}').format(number)
+        query = str(number)
+
+        # Make sure that all query entries have the same length
+        query += ' ' * (input_len - len(query))
+
+        questions.append(query)
+        expected.append(ans)
+
+    print('Total number of questions:', len(questions))
+
+    return questions, expected
+
+################################################################################
+################################################################################
+################################################################################
 
 # Tunable parameters
 TRAINING_SIZE = 5000
+TEST_SIZE = 1000
 INPUT_LEN = 10 # The maximum number of digits in the input integers
 DECIMALS = 1 # the number of decimals in the scientific notation
 
-# Maximum length of input is 'int + int' (e.g., '345+678'). Maximum length of
-# int is DIGITS.
+# This number is fixed
 OUTPUT_LEN = 6 + DECIMALS
-REVERSE = False
 
 chars = '0123456789e+. '
 ctable = CharacterTable(chars)
@@ -66,36 +104,21 @@ expected = []
 seen = set()
 print('Generating data...')
 
-while len(questions) < TRAINING_SIZE:
+questions, expected = generate_data_set(TRAINING_SIZE+TEST_SIZE, INPUT_LEN, DECIMALS)
 
-    # Sample numbers uniformly in log space
-    exp = np.random.uniform(1,INPUT_LEN-0.1)
-    number = int(10**exp)
-
-    # Skip the number if it has been encounterd before
-    if number in seen:
-        continue
-    seen.add(number)
-
-    # Build the input and output strings
-    ans = ('{:.'+str(DECIMALS)+'e}').format(number)
-    query = str(number)
-
-    # Make sure that all query entries have the same length
-    query += ' ' * (INPUT_LEN - len(query))
-
-    questions.append(query)
-    expected.append(ans)
-print('Total addition questions:', len(questions))
-
+################################################################################
+################################################################################
+################################################################################
 
 print('Vectorization...')
 x = np.zeros((len(questions), INPUT_LEN, len(chars)), dtype=np.bool)
 y = np.zeros((len(questions), OUTPUT_LEN, len(chars)), dtype=np.bool)
+
+# Encode all inputs and outputs (i.e. turn strings into matrices)
 for i, sentence in enumerate(questions):
     x[i] = ctable.encode(sentence, INPUT_LEN)
 for i, sentence in enumerate(expected):
-    y[i] = ctable.encode(sentence, OUTPUT_LEN) # input and output have the same length
+    y[i] = ctable.encode(sentence, OUTPUT_LEN)
 
 # Shuffle (x, y) in unison as the later parts of x will almost all be larger
 # digits.
@@ -104,10 +127,12 @@ np.random.shuffle(indices)
 x = x[indices]
 y = y[indices]
 
-# Explicitly set apart 10% for validation data that we never train over.
-split_at = len(x) - len(x) // 10
-(x_train, x_val) = x[:split_at], x[split_at:]
-(y_train, y_val) = y[:split_at], y[split_at:]
+# Split the data over the training set (90% training and 10% validation) and the test set
+split1 = int(0.9*TRAINING_SIZE)
+split2 = TRAINING_SIZE
+
+(x_train, x_val, x_test) = x[:split1], x[split1:split2], x[split2:]
+(y_train, y_val, y_test) = y[:split1], y[split1:split2], y[split2:]
 
 print('Training Data:')
 print(x_train.shape)
@@ -117,11 +142,19 @@ print('Validation Data:')
 print(x_val.shape)
 print(y_val.shape)
 
+print('Test Data:')
+print(x_val.shape)
+print(y_val.shape)
+
+################################################################################
+################################################################################
+################################################################################
+
 # Try replacing GRU, or SimpleRNN.
 RNN = layers.LSTM
 HIDDEN_SIZE = 128
 BATCH_SIZE = 128
-LAYERS = 2
+LAYERS = 1
 
 print('Build model...')
 model = Sequential()
@@ -149,18 +182,26 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 model.summary()
 
+training_accuracies = []
+training_losses = []
+
 # Train the model each generation and show predictions against the validation
 # dataset.
-for iteration in range(1, 200):
+for iteration in range(1, 100):
     print()
     print('-' * 50)
     print('Iteration', iteration)
-    model.fit(x_train, y_train,
+    hist = model.fit(x_train, y_train,
               batch_size=BATCH_SIZE,
               epochs=1,
               validation_data=(x_val, y_val))
     # Select 10 samples from the validation set at random so we can visualize
     # errors.
+
+    #print(hist.history)
+    training_accuracies.append([hist.history['acc'][0], hist.history['val_acc'][0]])
+    training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
+
     for i in range(10):
         ind = np.random.randint(0, len(x_val))
         rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
@@ -168,10 +209,22 @@ for iteration in range(1, 200):
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
         guess = ctable.decode(preds[0], calc_argmax=False)
-        print('Q', q[::-1] if REVERSE else q, end=' ')
+
+        print('Q', q, end=' ')
         print('T', correct, end=' ')
         if correct == guess:
             print('OK', end=' ')
         else:
             print('..', end=' ')
         print(guess)
+
+################################################################################
+################################################################################
+################################################################################
+
+scores = model.evaluate(x_test, y_test, verbose=1)
+print('-----------------------------------------')
+print('Test accuracy: ', scores[1])
+
+np.save('training_accuracies', np.array(training_accuracies))
+np.save('training_losses', np.array(training_losses))
