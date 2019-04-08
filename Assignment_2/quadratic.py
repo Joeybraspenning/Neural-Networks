@@ -71,7 +71,8 @@ def generate_data_set(n_items, input_len, n_decimals):
         seen.add(number)
 
         # Build the input and output strings
-        ans = ('1e{:.'+str(n_decimals)+'f}').format(np.log10(number))
+        ans = '{}'.format(number**2)
+        ans += ' ' * (input_len + input_len - len(ans))
         query = str(number)
 
         # Make sure that all query entries have the same length
@@ -91,13 +92,13 @@ def generate_data_set(n_items, input_len, n_decimals):
 # Tunable parameters
 TRAINING_SIZE = 5000
 TEST_SIZE = 1000
-INPUT_LEN = 10 # The maximum number of digits in the input integers
+INPUT_LEN = 5 # The maximum number of digits in the input integers
 DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
-OUTPUT_LEN = 4 + DECIMALS
+OUTPUT_LEN = INPUT_LEN + INPUT_LEN
 
-chars = '0123456789e+. '
+chars = '0123456789 '
 ctable = CharacterTable(chars)
 
 questions = []
@@ -192,7 +193,7 @@ training_losses = []
 
 # Train the model each generation and show predictions against the validation
 # dataset.
-for iteration in range(1, 100):
+for iteration in range(1, 200):
     print()
     print('-' * 50)
     print('Iteration', iteration)
