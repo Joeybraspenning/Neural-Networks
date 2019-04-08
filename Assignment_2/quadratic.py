@@ -71,8 +71,10 @@ def generate_data_set(n_items, input_len, n_decimals):
         seen.add(number)
 
         # Build the input and output strings
-        ans = '{}'.format(number**2)
-        ans += ' ' * (input_len + input_len - len(ans))
+        # ans = '{}'.format(number**2)
+        ans = ('{:.'+str(n_decimals)+'e}').format(number**2)
+        #ans += ' ' * (input_len + input_len - len(ans))
+
         query = str(number)
 
         # Make sure that all query entries have the same length
@@ -96,9 +98,9 @@ INPUT_LEN = 5 # The maximum number of digits in the input integers
 DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
-OUTPUT_LEN = INPUT_LEN + INPUT_LEN
+OUTPUT_LEN = 6 + DECIMALS
 
-chars = '0123456789 '
+chars = '0123456789e+. '
 ctable = CharacterTable(chars)
 
 questions = []
@@ -156,7 +158,7 @@ print(y_val.shape)
 RNN = layers.LSTM
 HIDDEN_SIZE = 128
 BATCH_SIZE = 128
-LAYERS = 1
+LAYERS = 2
 
 print('Build model...')
 model = Sequential()
@@ -164,7 +166,7 @@ model = Sequential()
 # Note: In a situation where your input sequences have a variable length,
 # use input_shape=(None, num_feature).
 model.add(RNN(HIDDEN_SIZE, input_shape=(INPUT_LEN, len(chars)), activation=layers.PReLU(), recurrent_activation='sigmoid',\
-                dropout=0.1, recurrent_dropout=0.05))
+                dropout=0.25, recurrent_dropout=0.125))
 model.add(BatchNormalization(center=True, scale=True))
 # As the decoder RNN's input, repeatedly provide with the last output of
 # RNN for each time step. Repeat 'DIGITS + 1' times as that's the maximum
@@ -178,7 +180,7 @@ for _ in range(LAYERS):
     # output_dim). This is necessary as TimeDistributed in the below expects
     # the first dimension to be the timesteps.
     model.add(RNN(HIDDEN_SIZE, return_sequences=True, activation=layers.PReLU(), recurrent_activation='sigmoid',\
-                    dropout=0.1, recurrent_dropout = 0.05))
+                    dropout=0.25, recurrent_dropout = 0.125))
     model.add(BatchNormalization(center=True, scale=True))
 # Apply a dense layer to the every temporal slice of an input. For each of step
 # of the output sequence, decide which character should be chosen.
