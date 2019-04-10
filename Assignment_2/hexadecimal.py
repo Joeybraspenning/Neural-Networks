@@ -10,7 +10,18 @@ from six.moves import range
 ################################################################################
 ################################################################################
 ################################################################################
+def match(s1, s2):
+    ok = False
 
+    for c1, c2 in zip(s1, s2):
+        if c1 != c2:
+            if ok:
+                return False
+            else:
+                ok = True
+
+    return ok
+    
 class CharacterTable(object):
     """Given a set of characters:
     + Encode them to a one-hot integer representation
@@ -71,9 +82,8 @@ def generate_data_set(n_items, input_len, n_decimals):
         seen.add(number)
 
         # Build the input and output strings
-        # ans = '{}'.format(number**2)
-        ans = ('{:.'+str(n_decimals)+'e}').format(number**2)
-        #ans += ' ' * (input_len + input_len - len(ans))
+
+        ans = str(hex(number))[2:]
 
         query = str(number)
 
@@ -98,9 +108,9 @@ INPUT_LEN = 5 # The maximum number of digits in the input integers
 DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
-OUTPUT_LEN = 6 + DECIMALS
+OUTPUT_LEN = 5
 
-chars = '0123456789e+. '
+chars = '0123456789abcdef '
 ctable = CharacterTable(chars)
 
 questions = []
@@ -158,7 +168,7 @@ print(y_val.shape)
 RNN = layers.LSTM
 HIDDEN_SIZE = 128
 BATCH_SIZE = 128
-LAYERS = 2
+LAYERS = 5
 
 print('Build model...')
 model = Sequential()
@@ -225,7 +235,19 @@ for iteration in range(1, 200):
         else:
             print('..', end=' ')
         print(guess)
-
+        
+    full, one_off = 0, 0
+    predict = model.predict_classes(x_val, verbose=0)
+    for i in range(len(x_val)):
+        correct = ctable.decode(y_val[i])
+        guess = ctable.decode(predict[i], calc_argmax=False)
+        if correct == guess:
+            full += 1
+        elif match(correct, guess):
+            one_off += 1
+    print('{}% of validation examples are completely correct'.format(100.
+    *float(full)/len(x_val)))
+    print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
 ################################################################################
 ################################################################################
 ################################################################################

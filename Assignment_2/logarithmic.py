@@ -10,7 +10,18 @@ from six.moves import range
 ################################################################################
 ################################################################################
 ################################################################################
+def match(s1, s2):
+    ok = False
 
+    for c1, c2 in zip(s1, s2):
+        if c1 != c2:
+            if ok:
+                return False
+            else:
+                ok = True
+
+    return ok
+    
 class CharacterTable(object):
     """Given a set of characters:
     + Encode them to a one-hot integer representation
@@ -153,9 +164,9 @@ print(y_val.shape)
 
 # Try replacing GRU, or SimpleRNN.
 RNN = layers.LSTM
-HIDDEN_SIZE = 128
-BATCH_SIZE = 128
-LAYERS = 1
+HIDDEN_SIZE = 256
+BATCH_SIZE = 64
+LAYERS = 2
 
 print('Build model...')
 model = Sequential()
@@ -222,7 +233,19 @@ for iteration in range(1, 100):
         else:
             print('..', end=' ')
         print(guess)
-
+        
+    full, one_off = 0, 0
+    predict = model.predict_classes(x_val, verbose=0)
+    for i in range(len(x_val)):
+        correct = ctable.decode(y_val[i])
+        guess = ctable.decode(predict[i], calc_argmax=False)
+        if correct == guess:
+            full += 1
+        elif match(correct, guess):
+            one_off += 1
+    print('{}% of validation examples are completely correct'.format(100.
+    *float(full)/len(x_val)))
+    print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
 ################################################################################
 ################################################################################
 ################################################################################

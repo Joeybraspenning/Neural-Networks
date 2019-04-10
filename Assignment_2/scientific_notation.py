@@ -3,13 +3,25 @@ from keras.models import Sequential
 from keras import layers
 from keras import callbacks
 from keras.callbacks import CSVLogger
+from keras.layers.normalization import BatchNormalization
 import numpy as np
 from six.moves import range
 
 ################################################################################
 ################################################################################
 ################################################################################
+def match(s1, s2):
+    ok = False
 
+    for c1, c2 in zip(s1, s2):
+        if c1 != c2:
+            if ok:
+                return False
+            else:
+                ok = True
+
+    return ok
+    
 class CharacterTable(object):
     """Given a set of characters:
     + Encode them to a one-hot integer representation
@@ -91,7 +103,7 @@ def generate_data_set(n_items, input_len, n_decimals):
 TRAINING_SIZE = 5000
 TEST_SIZE = 1000
 INPUT_LEN = 10 # The maximum number of digits in the input integers
-DECIMALS = 1 # the number of decimals in the scientific notation
+DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
 OUTPUT_LEN = 6 + DECIMALS
@@ -161,24 +173,31 @@ model = Sequential()
 # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
 # Note: In a situation where your input sequences have a variable length,
 # use input_shape=(None, num_feature).
-model.add(RNN(HIDDEN_SIZE, input_shape=(INPUT_LEN, len(chars))))
+model.add(RNN(HIDDEN_SIZE, input_shape=(INPUT_LEN, len(chars)),\
+         activation=layers.PReLU(), recurrent_activation='sigmoid',\
+         dropout=0.25, recurrent_dropout=0.125))
+model.add(BatchNormalization(center=True, scale=True))
 # As the decoder RNN's input, repeatedly provide with the last output of
 # RNN for each time step. Repeat 'DIGITS + 1' times as that's the maximum
 # length of output, e.g., when DIGITS=3, max output is 999+999=1998.
 model.add(layers.RepeatVector(OUTPUT_LEN))
+model.add(BatchNormalization(center=True, scale=True))
 # The decoder RNN could be multiple layers stacked or a single layer.
 for _ in range(LAYERS):
     # By setting return_sequences to True, return not only the last output but
     # all the outputs so far in the form of (num_samples, timesteps,
     # output_dim). This is necessary as TimeDistributed in the below expects
     # the first dimension to be the timesteps.
-    model.add(RNN(HIDDEN_SIZE, return_sequences=True))
+    model.add(RNN(HIDDEN_SIZE, return_sequences=True,\
+     activation=layers.PReLU(), recurrent_activation='sigmoid',\
+                dropout=0.25, recurrent_dropout=0.125))
+    model.add(BatchNormalization(center=True, scale=True))
 
 # Apply a dense layer to the every temporal slice of an input. For each of step
 # of the output sequence, decide which character should be chosen.
 model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 model.compile(loss='categorical_crossentropy',
-              optimizer='adam',
+              optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
 
@@ -217,6 +236,23 @@ for iteration in range(1, 100):
         else:
             print('..', end=' ')
         print(guess)
+     
+    
+        
+    full, one_off = 0, 0
+    predict = model.predict_classes(x_val, verbose=0)
+    for i in range(len(x_val)):
+        correct = ctable.decode(y_val[i])
+        guess = ctable.decode(predict[i], calc_argmax=False)
+        if correct == guess:
+            full += 1
+        elif match(correct, guess):
+            one_off += 1
+    print('{}% of validation examples are completely correct'.format(100.
+    *float(full)/len(x_val)))
+    print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
+        
+        
 
 ################################################################################
 ################################################################################
