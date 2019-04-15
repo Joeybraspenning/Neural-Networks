@@ -264,7 +264,7 @@ for iteration in range(1, 200):
         #print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
-        print(preds[0])
+        print(rowy[0], preds[0])
         guess = ctable.decode(preds[0])#, calc_argmax=False)
 
         print('Q', q, end=' ')
