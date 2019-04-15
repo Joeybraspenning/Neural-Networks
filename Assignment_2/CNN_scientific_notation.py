@@ -261,6 +261,7 @@ for iteration in range(1, 200):
         preds = model.predict_classes(rowx, verbose=0)
         print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
         print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
+        print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
 
         rowx = np.squeeze(rowx, axis=3)
         rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
