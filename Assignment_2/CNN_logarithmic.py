@@ -110,7 +110,7 @@ INPUT_LEN = 10 # The maximum number of digits in the input integers
 DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
-OUTPUT_LEN = 7 + DECIMALS
+OUTPUT_LEN = 4 + DECIMALS
 
 chars = '0123456789e+. '
 ctable = CharacterTable(chars)
@@ -229,7 +229,7 @@ model.add(Activation('tanh'))
 
 # model.add(MaxPooling2D(1))
 
-model.add(Reshape((10, 14)))
+model.add(Reshape((7, 14)))
 
 model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
