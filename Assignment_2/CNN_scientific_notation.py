@@ -263,12 +263,14 @@ for iteration in range(1, 200):
         print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
 
         rowx = np.squeeze(rowx, axis=3)
-        rowy = np.squeeze(rowy, axis=3)
+        rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
+        preds = np.reshape(preds, (preds.shape[0], 9, 14))
+
         # preds = np.squeeze(preds, axis=3)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
         #print(rowy[0], preds[0])
-        guess = ctable.decode(preds[0], calc_argmax=False)
+        guess = ctable.decode(preds[0])#, calc_argmax=False)
 
         print('Q', q, end=' ')
         print('T', correct, end=' ')
