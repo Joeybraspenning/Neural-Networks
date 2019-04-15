@@ -262,7 +262,7 @@ for iteration in range(1, 200):
         # rowx = np.squeeze(rowx, axis=3)
         # rowy = np.squeeze(rowy, axis=3)
         # preds = np.squeeze(preds, axis=3)
-        #print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
+        print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
         #print(rowy[0], preds[0])
