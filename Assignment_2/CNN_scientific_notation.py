@@ -229,6 +229,8 @@ model.add(Activation('softmax'))
 
 # model.add(MaxPooling2D(1))
 
+model.reshape((None, 9, 14))
+
 model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
 
