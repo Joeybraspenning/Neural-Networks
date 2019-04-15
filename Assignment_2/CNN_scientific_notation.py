@@ -206,26 +206,26 @@ model = Sequential()
 # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
 # Note: In a situation where your input sequences have a variable length,
 # use input_shape=(None, num_feature).
-model.add(Conv2D(64, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(5, 5),\
+model.add(Conv2D(128, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(8, 8),\
              padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
+model.add(Activation('tanh'))
 model.add(Dropout(0.25))
 
 
-model.add(Conv2D(64, (3, 3), padding='same'))
+model.add(Conv2D(64, (6, 6), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
+model.add(Activation('tanh'))
 model.add(Dropout(0.25))
 
-model.add(Conv2D(32, (3, 3), padding='same'))
+model.add(Conv2D(32, (5, 5), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
+model.add(Activation('tanh'))
 model.add(Dropout(0.25))
 
 model.add(Conv2D(1, (5, 5), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('softmax'))
+model.add(Activation('tanh'))
 
 # model.add(MaxPooling2D(1))
 
