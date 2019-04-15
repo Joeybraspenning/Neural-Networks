@@ -299,7 +299,7 @@ for iteration in range(1, 2000):
     predict = model.predict_classes(x_val, verbose=0)
     for i in range(len(x_val)):
         correct = ctable.decode(y_val[i])
-        guess = ctable.decode(predict[i])#, calc_argmax=False)
+        guess = ctable.decode(predict[i], calc_argmax=False)
         if correct == guess:
             full += 1
         elif match(correct, guess):
@@ -313,7 +313,7 @@ for iteration in range(1, 2000):
     predict = model.predict_classes(x_train, verbose=0)
     for i in range(len(x_train)):
         correct = ctable.decode(y_train[i])
-        guess = ctable.decode(predict[i])#, calc_argmax=False)
+        guess = ctable.decode(predict[i], calc_argmax=False)
         if correct == guess:
             full_train += 1
         elif match(correct, guess):
