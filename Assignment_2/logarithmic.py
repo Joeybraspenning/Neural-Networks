@@ -202,6 +202,7 @@ for HIDDEN_SIZE in [64, 128, 256, 1024]:
 
             training_accuracies = []
             training_losses = []
+            training_precisions = []
 
             # Train the model each generation and show predictions against the validation
             # dataset.
