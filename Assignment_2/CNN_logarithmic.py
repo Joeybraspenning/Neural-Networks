@@ -294,7 +294,7 @@ for iteration in range(1, 2000):
             print('..', end=' ')
         print(guess)
      
-'''   
+   
     full, one_off = 0, 0
     predict = model.predict_classes(x_val, verbose=0)
     for i in range(len(x_val)):
