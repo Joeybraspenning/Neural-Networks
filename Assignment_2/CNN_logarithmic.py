@@ -266,59 +266,59 @@ for iteration in range(1, 2000):
     #print(hist.history)
     training_accuracies.append([hist.history['acc'][0], hist.history['val_acc'][0]])
     training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
+    if np.mod(iteration, 10) ==0:
+        for i in range(10):
+            ind = np.random.randint(0, len(x_val))
+            rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
+            preds = model.predict_classes(rowx, verbose=0)
+            # print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
+            # print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
+            # print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
 
-    for i in range(10):
-        ind = np.random.randint(0, len(x_val))
-        rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
-        preds = model.predict_classes(rowx, verbose=0)
-        # print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
-        # print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
-        # print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
+            rowx = np.squeeze(rowx, axis=3)
+            # rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
+            # print(preds)
+            # preds = np.reshape(preds, (preds.shape[0], 9, 14))
 
-        rowx = np.squeeze(rowx, axis=3)
-        # rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
-        # print(preds)
-        # preds = np.reshape(preds, (preds.shape[0], 9, 14))
+            # preds = np.squeeze(preds, axis=3)
+            q = ctable.decode(rowx[0])
+            correct = ctable.decode(rowy[0])
+            #print(rowy[0], preds[0])
+            guess = ctable.decode(preds[0], calc_argmax=False)
 
-        # preds = np.squeeze(preds, axis=3)
-        q = ctable.decode(rowx[0])
-        correct = ctable.decode(rowy[0])
-        #print(rowy[0], preds[0])
-        guess = ctable.decode(preds[0], calc_argmax=False)
+            print('Q', q, end=' ')
+            print('T', correct, end=' ')
+            if correct == guess:
+                print('OK', end=' ')
+            else:
+                print('..', end=' ')
+            print(guess)
+         
+       
+        full, one_off = 0, 0
+        predict = model.predict_classes(x_val, verbose=0)
+        for i in range(len(x_val)):
+            correct = ctable.decode(y_val[i])
+            guess = ctable.decode(predict[i], calc_argmax=False)
+            if correct == guess:
+                full += 1
+            elif match(correct, guess):
+                one_off += 1
+        print('{}% of validation examples are completely correct'.format(100.
+        *float(full)/len(x_val)))
+        print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
+            
 
-        print('Q', q, end=' ')
-        print('T', correct, end=' ')
-        if correct == guess:
-            print('OK', end=' ')
-        else:
-            print('..', end=' ')
-        print(guess)
-     
-   
-    full, one_off = 0, 0
-    predict = model.predict_classes(x_val, verbose=0)
-    for i in range(len(x_val)):
-        correct = ctable.decode(y_val[i])
-        guess = ctable.decode(predict[i], calc_argmax=False)
-        if correct == guess:
-            full += 1
-        elif match(correct, guess):
-            one_off += 1
-    print('{}% of validation examples are completely correct'.format(100.
-    *float(full)/len(x_val)))
-    print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
-        
-
-    full_train, one_off_train = 0, 0
-    predict = model.predict_classes(x_train, verbose=0)
-    for i in range(len(x_train)):
-        correct = ctable.decode(y_train[i])
-        guess = ctable.decode(predict[i], calc_argmax=False)
-        if correct == guess:
-            full_train += 1
-        elif match(correct, guess):
-            one_off_train += 1
-    training_precisions.append([float(full_train)/len(x_train), float(one_off_train)/len(x_train), float(full)/len(x_val), float(one_off)/len(x_val)])
+        full_train, one_off_train = 0, 0
+        predict = model.predict_classes(x_train, verbose=0)
+        for i in range(len(x_train)):
+            correct = ctable.decode(y_train[i])
+            guess = ctable.decode(predict[i], calc_argmax=False)
+            if correct == guess:
+                full_train += 1
+            elif match(correct, guess):
+                one_off_train += 1
+        training_precisions.append([float(full_train)/len(x_train), float(one_off_train)/len(x_train), float(full)/len(x_val), float(one_off)/len(x_val)])
 
 ################################################################################
 ################################################################################
