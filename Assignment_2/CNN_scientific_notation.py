@@ -259,14 +259,14 @@ for iteration in range(1, 200):
         ind = np.random.randint(0, len(x_val))
         rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
         preds = model.predict_classes(rowx, verbose=0)
-        rowx = np.squeeze(rowx, axis=3)
-        rowy = np.squeeze(rowy, axis=3)
-        preds = np.squeeze(preds, axis=3)
+        # rowx = np.squeeze(rowx, axis=3)
+        # rowy = np.squeeze(rowy, axis=3)
+        # preds = np.squeeze(preds, axis=3)
         #print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
         #print(rowy[0], preds[0])
-        guess = ctable.decode(preds[0])#, calc_argmax=False)
+        guess = ctable.decode(preds[0], calc_argmax=False)
 
         print('Q', q, end=' ')
         print('T', correct, end=' ')
