@@ -1,8 +1,9 @@
 from __future__ import print_function
-from keras.models import Sequential
-from keras import layers
 from keras import callbacks
 from keras.callbacks import CSVLogger
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Dropout, Reshape, Conv2D
+from keras.layers import MaxPooling2D, Flatten
 from keras.layers.normalization import BatchNormalization
 import tensorflow as tf
 import numpy as np
