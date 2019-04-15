@@ -205,18 +205,18 @@ model = Sequential()
 model.add(Conv2D(64, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(5, 5),\
              padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
+model.add(Activation('sigmoid'))
 model.add(Dropout(0.25))
 
 
 model.add(Conv2D(64, (3, 3), padding='same'))
 model.add(BatchNormalization())
-model.add(Activation('relu'))
+model.add(Activation('sigmoid'))
 model.add(Dropout(0.25))
 
 model.add(Conv2D(32, (3, 3), padding='same'))
 model.add(BatchNormalization())
-model.add(Activation('relu'))
+model.add(Activation('sigmoid'))
 model.add(Dropout(0.25))
 
 model.add(Conv2D(1, (5, 5), padding='same'))
@@ -264,7 +264,7 @@ for iteration in range(1, 200):
         #print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
-        print(rowy[0], preds[0])
+        #print(rowy[0], preds[0])
         guess = ctable.decode(preds[0])#, calc_argmax=False)
 
         print('Q', q, end=' ')
