@@ -222,8 +222,6 @@ model.add(Dropout(0.25))
 model.add(Conv2D(1, (5, 5), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('softmax'))
-model.add(Dropout(0.25))            
-
 
 model.compile(loss='binary_crossentropy',
               optimizer='Nadam',
@@ -231,11 +229,11 @@ model.compile(loss='binary_crossentropy',
 model.summary()
 
 
-hist = model.fit(x_train, y_train,
-          batch_size=BATCH_SIZE,
-          epochs=100,
-          validation_data=(x_val, y_val))
-'''
+# hist = model.fit(x_train, y_train,
+#           batch_size=BATCH_SIZE,
+#           epochs=100,
+#           validation_data=(x_val, y_val))
+
 training_accuracies = []
 training_losses = []
 training_precisions = []
@@ -273,7 +271,7 @@ for iteration in range(1, 200):
         print(guess)
      
     
-        
+'''    
     full, one_off = 0, 0
     predict = model.predict_classes(x_val, verbose=0)
     for i in range(len(x_val)):
