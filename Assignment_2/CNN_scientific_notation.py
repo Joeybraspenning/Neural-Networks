@@ -265,6 +265,7 @@ for iteration in range(1, 200):
 
         rowx = np.squeeze(rowx, axis=3)
         rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
+        print(preds)
         preds = np.reshape(preds, (preds.shape[0], 9, 14))
 
         # preds = np.squeeze(preds, axis=3)
