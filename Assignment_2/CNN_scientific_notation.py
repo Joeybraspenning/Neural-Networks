@@ -174,7 +174,7 @@ model = Sequential()
 # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
 # Note: In a situation where your input sequences have a variable length,
 # use input_shape=(None, num_feature).
-model.add(Conv2D(64 input_shape = (INPUT_LEN, len(chars)), kernel_size=(5, 5),\
+model.add(Conv2D(64, input_shape = (INPUT_LEN, len(chars)), kernel_size=(5, 5),\
              padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
