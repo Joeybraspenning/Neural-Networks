@@ -223,11 +223,13 @@ model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('sigmoid'))
 model.add(Dropout(0.25))
 
-model.add(Conv2D(9, (5, 5), padding='same'))
+model.add(Conv2D(1, (5, 5), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('softmax'))
 
-model.add(layers.TimeDistributed(layers.Conv2D(1, (5,5), padding='same', activation='softmax')))
+# model.add(MaxPooling2D(1))
+
+model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
 
 model.add(Flatten())
