@@ -229,7 +229,7 @@ model.add(Activation('tanh'))
 
 # model.add(MaxPooling2D(1))
 
-model.add(Reshape((7, 14)))
+model.add(Reshape((10, 14)))
 
 model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
