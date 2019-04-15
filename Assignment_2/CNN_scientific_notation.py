@@ -173,11 +173,11 @@ BATCH_SIZE = 128
 # LAYERS = 1
 
 x_train = np.expand_dims(x_train, axis=3)
-y_train = np.expand_dims(y_train, axis=3)
+# y_train = np.expand_dims(y_train, axis=3)
 
 # y_train = np.reshape(y_train, (y_train.shape[0], y_train.shape[1]*y_train.shape[2]))
 x_val = np.expand_dims(x_val, axis=3)
-y_val = np.expand_dims(y_val, axis=3)
+# y_val = np.expand_dims(y_val, axis=3)
 
 # y_val = np.reshape(y_val, (y_val.shape[0], y_val.shape[1]*y_val.shape[2]))
 
