@@ -218,7 +218,7 @@ model.add(Dropout(0.25))
 
 
 
-model.compile(loss='categorical_crossentropy',
+model.compile(loss='sparse_categorical_crossentropy',
               optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
