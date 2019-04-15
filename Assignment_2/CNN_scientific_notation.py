@@ -258,7 +258,9 @@ for iteration in range(1, 200):
         ind = np.random.randint(0, len(x_val))
         rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
         preds = model.predict_classes(rowx, verbose=0)
-        print(rowx.shape, rowx[0].shape)
+        rowx = np.squeeze(rowx, axis=3)
+        rowy = np.squeeze(rowy, axis=3)
+        preds = np.squeeze(preds, axis=3)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
         guess = ctable.decode(preds[0], calc_argmax=False)
