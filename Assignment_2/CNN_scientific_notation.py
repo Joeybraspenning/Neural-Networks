@@ -210,17 +210,17 @@ model.add(Dropout(0.25))
 
 
 model.add(Conv2D(64, (3, 3), padding='same'))
-model.add(BatchNormalization())
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('sigmoid'))
 model.add(Dropout(0.25))
 
 model.add(Conv2D(32, (3, 3), padding='same'))
-model.add(BatchNormalization())
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('sigmoid'))
 model.add(Dropout(0.25))
 
 model.add(Conv2D(1, (5, 5), padding='same'))
-model.add(BatchNormalization())
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('softmax'))
 
 model.compile(loss='binary_crossentropy',
