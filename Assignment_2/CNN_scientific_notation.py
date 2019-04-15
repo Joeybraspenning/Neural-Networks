@@ -218,7 +218,7 @@ model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('sigmoid'))
 model.add(Dropout(0.25))
 
-model.add(Conv2D(1, (5, 5), padding='same'))
+model.add(Conv2D(9, (5, 5), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('softmax'))
 
