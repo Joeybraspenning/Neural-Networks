@@ -106,7 +106,7 @@ def generate_data_set(n_items, input_len, n_decimals):
 # Tunable parameters
 TRAINING_SIZE = 5000
 TEST_SIZE = 1000
-INPUT_LEN = 9 # The maximum number of digits in the input integers
+INPUT_LEN = 10 # The maximum number of digits in the input integers
 DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
@@ -203,29 +203,45 @@ print(y_val.shape)
 
 print('Build model...')
 model = Sequential()
-# "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
-# Note: In a situation where your input sequences have a variable length,
-# use input_shape=(None, num_feature).
-model.add(Conv2D(128, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(8, 8),\
-             padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
-model.add(Dropout(0.25))
 
-
-model.add(Conv2D(64, (6, 6), padding='same'))
+model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(2, 1)))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
-model.add(Dropout(0.25))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
 
-model.add(Conv2D(32, (5, 5), padding='same'))
+model.add(Conv2D(256, (14, 14), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
-model.add(Dropout(0.25))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
 
-model.add(Conv2D(1, (5, 5), padding='same'))
+model.add(Conv2D(128, (10, 10), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Conv2D(64, (8, 8), padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Conv2D(32, (6,6), padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Conv2D(32, (3,3), padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Conv2D(16, (3,3), padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Conv2D(1, (3,3), padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
 
 # model.add(MaxPooling2D(1))
 
@@ -259,76 +275,87 @@ for iteration in range(1, 2000):
     hist = model.fit(x_train, y_train,
               batch_size=BATCH_SIZE,
               epochs=1,
-              validation_data=(x_val, y_val))
+              validation_data=(x_val, y_val), shuffle=True)
     # Select 10 samples from the validation set at random so we can visualize
     # errors.
 
     #print(hist.history)
     training_accuracies.append([hist.history['acc'][0], hist.history['val_acc'][0]])
     training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
+    if np.mod(iteration, 10) ==0:
+        for i in range(10):
+            ind = np.random.randint(0, len(x_val))
+            rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
+            preds = model.predict_classes(rowx, verbose=0)
+            # print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
+            # print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
+            # print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
 
-    for i in range(10):
-        ind = np.random.randint(0, len(x_val))
-        rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
-        preds = model.predict_classes(rowx, verbose=0)
-        # print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
-        # print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
-        # print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
+            rowx = np.squeeze(rowx, axis=3)
+            # rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
+            # print(preds)
+            # preds = np.reshape(preds, (preds.shape[0], 9, 14))
 
-        rowx = np.squeeze(rowx, axis=3)
-        # rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
-        # print(preds)
-        # preds = np.reshape(preds, (preds.shape[0], 9, 14))
+            # preds = np.squeeze(preds, axis=3)
+            q = ctable.decode(rowx[0])
+            correct = ctable.decode(rowy[0])
+            #print(rowy[0], preds[0])
+            guess = ctable.decode(preds[0], calc_argmax=False)
 
-        # preds = np.squeeze(preds, axis=3)
-        q = ctable.decode(rowx[0])
-        correct = ctable.decode(rowy[0])
-        #print(rowy[0], preds[0])
-        guess = ctable.decode(preds[0], calc_argmax=False)
+            print('Q', q, end=' ')
+            print('T', correct, end=' ')
+            if correct == guess:
+                print('OK', end=' ')
+            else:
+                print('..', end=' ')
+            print(guess)
+         
+       
+        full, one_off = 0, 0
+        predict = model.predict_classes(x_val, verbose=0)
+        for i in range(len(x_val)):
+            correct = ctable.decode(y_val[i])
+            guess = ctable.decode(predict[i], calc_argmax=False)
+            if correct == guess:
+                full += 1
+            elif match(correct, guess):
+                one_off += 1
+        print('{}% of validation examples are completely correct'.format(100.
+        *float(full)/len(x_val)))
+        print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
+            
 
-        print('Q', q, end=' ')
-        print('T', correct, end=' ')
-        if correct == guess:
-            print('OK', end=' ')
-        else:
-            print('..', end=' ')
-        print(guess)
-     
-'''   
-    full, one_off = 0, 0
-    predict = model.predict_classes(x_val, verbose=0)
-    for i in range(len(x_val)):
-        correct = ctable.decode(y_val[i])
-        guess = ctable.decode(predict[i])#, calc_argmax=False)
-        if correct == guess:
-            full += 1
-        elif match(correct, guess):
-            one_off += 1
-    print('{}% of validation examples are completely correct'.format(100.
-    *float(full)/len(x_val)))
-    print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
-        
-
-    full_train, one_off_train = 0, 0
-    predict = model.predict_classes(x_train, verbose=0)
-    for i in range(len(x_train)):
-        correct = ctable.decode(y_train[i])
-        guess = ctable.decode(predict[i])#, calc_argmax=False)
-        if correct == guess:
-            full_train += 1
-        elif match(correct, guess):
-            one_off_train += 1
-    training_precisions.append([float(full_train)/len(x_train), float(one_off_train)/len(x_train), float(full)/len(x_val), float(one_off)/len(x_val)])
+        full_train, one_off_train = 0, 0
+        predict = model.predict_classes(x_train, verbose=0)
+        for i in range(len(x_train)):
+            correct = ctable.decode(y_train[i])
+            guess = ctable.decode(predict[i], calc_argmax=False)
+            if correct == guess:
+                full_train += 1
+            elif match(correct, guess):
+                one_off_train += 1
+        training_precisions.append([float(full_train)/len(x_train), float(one_off_train)/len(x_train), float(full)/len(x_val), float(one_off)/len(x_val)])
 
 ################################################################################
 ################################################################################
 ################################################################################
+full, one_off = 0, 0
+predict = model.predict_classes(x_test, verbose=0)
+for i in range(len(x_test)):
+    correct = ctable.decode(y_test[i])
+    guess = ctable.decode(predict[i], calc_argmax=False)
+    if correct == guess:
+        full += 1
+    elif match(correct, guess):
+        one_off += 1
+print('{}% of test examples are completely correct'.format(100.
+*float(full)/len(x_test)))
+print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_test)))
+            
+# scores = model.evaluate(x_test, y_test, verbose=1)
+# print('-----------------------------------------')
+# print('Test accuracy: ', scores[1])
 
-scores = model.evaluate(x_test, y_test, verbose=1)
-print('-----------------------------------------')
-print('Test accuracy: ', scores[1])
-
-# np.save('scientific_notation_accuracies_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_accuracies))
-# np.save('scientific_notation_losses_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_losses))
-# np.save('scientific_notation_precisions_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_precisions))
-'''
+np.save('scientific_notation_accuracies_CNN', np.array(training_accuracies))
+np.save('scientific_notation_losses_CNN', np.array(training_losses))
+np.save('scientific_notation_precisions_CNN', np.array(training_precisions))
