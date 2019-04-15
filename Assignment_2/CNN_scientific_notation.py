@@ -338,18 +338,18 @@ for iteration in range(1, 200):
 ################################################################################
 ################################################################################
 ################################################################################
-full, one_off = 0, 0
-predict = model.predict_classes(x_test, verbose=0)
-for i in range(len(x_test)):
-    correct = ctable.decode(y_test[i])
-    guess = ctable.decode(predict[i], calc_argmax=False)
-    if correct == guess:
-        full += 1
-    elif match(correct, guess):
-        one_off += 1
-print('{}% of test examples are completely correct'.format(100.
-*float(full)/len(x_test)))
-print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_test)))
+# full, one_off = 0, 0
+# predict = model.predict_classes(x_test, verbose=0)
+# for i in range(len(x_test)):
+#     correct = ctable.decode(y_test[i])
+#     guess = ctable.decode(predict[i], calc_argmax=False)
+#     if correct == guess:
+#         full += 1
+#     elif match(correct, guess):
+#         one_off += 1
+# print('{}% of test examples are completely correct'.format(100.
+# *float(full)/len(x_test)))
+# print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_test)))
             
 # scores = model.evaluate(x_test, y_test, verbose=1)
 # print('-----------------------------------------')
