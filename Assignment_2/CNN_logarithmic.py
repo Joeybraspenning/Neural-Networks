@@ -212,22 +212,22 @@ for activ in ['relu', 'tanh', 'sigmoid']:
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(256, (14, 14), padding='same'))
+    model.add(Conv2D(256, (8, 8), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(128, (10, 10), padding='same'))
+    model.add(Conv2D(128, (6, 6), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(64, (8, 8), padding='same'))
+    model.add(Conv2D(64, (6, 6), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(32, (6,6), padding='same'))
+    model.add(Conv2D(32, (5,5), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
@@ -358,6 +358,6 @@ for activ in ['relu', 'tanh', 'sigmoid']:
     # print('-----------------------------------------')
     # print('Test accuracy: ', scores[1])
 
-    np.save('logarithmic_accuracies_CNN_{}'.format(activ), np.array(training_accuracies))
-    np.save('logarithmic_losses_CNN_{}'.format(activ), np.array(training_losses))
-    np.save('logarithmic_precisions_CNN_{}'.format(activ), np.array(training_precisions))
+    np.save('logarithmic_accuracies_CNN_2nd_{}'.format(activ), np.array(training_accuracies))
+    np.save('logarithmic_losses_CNN_2nd_{}'.format(activ), np.array(training_losses))
+    np.save('logarithmic_precisions_CNN_2nd_{}'.format(activ), np.array(training_precisions))
