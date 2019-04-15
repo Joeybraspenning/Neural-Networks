@@ -261,7 +261,7 @@ for iteration in range(1, 200):
         rowx = np.squeeze(rowx, axis=3)
         rowy = np.squeeze(rowy, axis=3)
         preds = np.squeeze(preds, axis=3)
-        print(type(rowx), type(np.array(rowx)))
+        print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
         guess = ctable.decode(preds[0], calc_argmax=False)
