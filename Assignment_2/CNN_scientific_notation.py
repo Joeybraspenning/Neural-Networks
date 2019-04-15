@@ -232,7 +232,7 @@ model.add(Activation('softmax'))
 model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
 
-model.add(Flatten())
+# model.add(Flatten())
 
 model.compile(loss='categorical_crossentropy',
               optimizer='Nadam',
