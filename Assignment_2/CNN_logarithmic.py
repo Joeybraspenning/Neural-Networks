@@ -209,23 +209,29 @@ model = Sequential()
 model.add(Conv2D(128, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(8, 8),\
              padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
+model.add(Activation('relu'))
 model.add(Dropout(0.25))
 
 
 model.add(Conv2D(64, (6, 6), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
+model.add(Activation('relu'))
 model.add(Dropout(0.25))
 
 model.add(Conv2D(32, (5, 5), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
+model.add(Activation('relu'))
 model.add(Dropout(0.25))
 
-model.add(Conv2D(1, (4, 1)))
+model.add(Conv2D(16, (4, 1)))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('tanh'))
+model.add(Activation('relu'))
+model.add(Dropout(0.25))
+
+
+model.add(Conv2D(1, (3,3), padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
 
 # model.add(MaxPooling2D(1))
 
