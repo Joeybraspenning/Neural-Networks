@@ -107,7 +107,7 @@ def generate_data_set(n_items, input_len, n_decimals):
 TRAINING_SIZE = 5000
 TEST_SIZE = 1000
 INPUT_LEN = 10 # The maximum number of digits in the input integers
-DECIMALS = 6 # the number of decimals in the scientific notation
+DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
 OUTPUT_LEN = 4 + DECIMALS
@@ -223,13 +223,13 @@ model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('tanh'))
 model.add(Dropout(0.25))
 
-model.add(Conv2D(1, (5, 5), padding='same'))
+model.add(Conv2D(1, (4, 1)))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('tanh'))
 
 # model.add(MaxPooling2D(1))
 
-model.add(Reshape((10, 14)))
+model.add(Reshape((7, 14)))
 
 model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
