@@ -200,92 +200,91 @@ print('Test Data:')
 print(x_val.shape)
 print(y_val.shape)
 
+for activ in ['relu', 'tanh', 'sigmoid']:
+
+    print('Build model...')
+    model = Sequential()
+    # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
+    # Note: In a situation where your input sequences have a variable length,
+    # use input_shape=(None, num_feature).
+    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(4, 1)))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+    model.add(Dropout(0.5))
+
+    model.add(Conv2D(256, (14, 14), padding='same'))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+    model.add(Dropout(0.5))
+
+    model.add(Conv2D(128, (10, 10), padding='same'))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+    model.add(Dropout(0.5))
+
+    model.add(Conv2D(64, (8, 8), padding='same'))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+    model.add(Dropout(0.5))
+
+    model.add(Conv2D(32, (6,6), padding='same'))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+    model.add(Dropout(0.5))
+
+    model.add(Conv2D(32, (3,3), padding='same'))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+    model.add(Dropout(0.5))
+
+    model.add(Conv2D(16, (3,3), padding='same'))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+    model.add(Dropout(0.5))
+
+    model.add(Conv2D(1, (3,3), padding='same'))
+    model.add(BatchNormalization(center=True, scale=True))
+    model.add(Activation(activ))
+
+    # model.add(MaxPooling2D(1))
+
+    model.add(Reshape((7, 14)))
+
+    model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
 
-print('Build model...')
-model = Sequential()
-# "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
-# Note: In a situation where your input sequences have a variable length,
-# use input_shape=(None, num_feature).
-model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(4, 1)))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
+    # model.add(Flatten())
 
-model.add(Conv2D(256, (14, 14), padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Conv2D(128, (10, 10), padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Conv2D(64, (8, 8), padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Conv2D(32, (6,6), padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Conv2D(32, (3,3), padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Conv2D(16, (3,3), padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Conv2D(1, (3,3), padding='same'))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-
-# model.add(MaxPooling2D(1))
-
-model.add(Reshape((7, 14)))
-
-model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
+    model.compile(loss='categorical_crossentropy',
+                  optimizer='Nadam',
+                  metrics=['accuracy'])
+    model.summary()
 
 
-# model.add(Flatten())
+    # hist = model.fit(x_train, y_train,
+    #           batch_size=BATCH_SIZE,
+    #           epochs=100,
+    #           validation_data=(x_val, y_val))
 
-model.compile(loss='categorical_crossentropy',
-              optimizer='Nadam',
-              metrics=['accuracy'])
-model.summary()
+    training_accuracies = []
+    training_losses = []
+    training_precisions = []
+    # Train the model each generation and show predictions against the validation
+    # dataset.
+    for iteration in range(1, 200):
+        print()
+        print('-' * 50)
+        print('Iteration', iteration)
+        hist = model.fit(x_train, y_train,
+                  batch_size=BATCH_SIZE,
+                  epochs=1,
+                  validation_data=(x_val, y_val), shuffle=True)
+        # Select 10 samples from the validation set at random so we can visualize
+        # errors.
 
-
-# hist = model.fit(x_train, y_train,
-#           batch_size=BATCH_SIZE,
-#           epochs=100,
-#           validation_data=(x_val, y_val))
-
-training_accuracies = []
-training_losses = []
-training_precisions = []
-# Train the model each generation and show predictions against the validation
-# dataset.
-for iteration in range(1, 200):
-    print()
-    print('-' * 50)
-    print('Iteration', iteration)
-    hist = model.fit(x_train, y_train,
-              batch_size=BATCH_SIZE,
-              epochs=1,
-              validation_data=(x_val, y_val), shuffle=True)
-    # Select 10 samples from the validation set at random so we can visualize
-    # errors.
-
-    #print(hist.history)
-    training_accuracies.append([hist.history['acc'][0], hist.history['val_acc'][0]])
-    training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
-    if np.mod(iteration, 10) ==0:
+        #print(hist.history)
+        training_accuracies.append([hist.history['acc'][0], hist.history['val_acc'][0]])
+        training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
         for i in range(10):
             ind = np.random.randint(0, len(x_val))
             rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
@@ -339,26 +338,26 @@ for iteration in range(1, 200):
                 one_off_train += 1
         training_precisions.append([float(full_train)/len(x_train), float(one_off_train)/len(x_train), float(full)/len(x_val), float(one_off)/len(x_val)])
 
-################################################################################
-################################################################################
-################################################################################
-full, one_off = 0, 0
-predict = model.predict_classes(x_test, verbose=0)
-for i in range(len(x_test)):
-    correct = ctable.decode(y_test[i])
-    guess = ctable.decode(predict[i], calc_argmax=False)
-    if correct == guess:
-        full += 1
-    elif match(correct, guess):
-        one_off += 1
-print('{}% of test examples are completely correct'.format(100.
-*float(full)/len(x_test)))
-print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_test)))
-            
-# scores = model.evaluate(x_test, y_test, verbose=1)
-# print('-----------------------------------------')
-# print('Test accuracy: ', scores[1])
+    ################################################################################
+    ################################################################################
+    ################################################################################
+    full, one_off = 0, 0
+    predict = model.predict_classes(x_test, verbose=0)
+    for i in range(len(x_test)):
+        correct = ctable.decode(y_test[i])
+        guess = ctable.decode(predict[i], calc_argmax=False)
+        if correct == guess:
+            full += 1
+        elif match(correct, guess):
+            one_off += 1
+    print('{}% of test examples are completely correct'.format(100.
+    *float(full)/len(x_test)))
+    print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_test)))
+                
+    # scores = model.evaluate(x_test, y_test, verbose=1)
+    # print('-----------------------------------------')
+    # print('Test accuracy: ', scores[1])
 
-np.save('logarithmic_accuracies_CNN_relu', np.array(training_accuracies))
-np.save('logarithmic_losses_CNN_relu', np.array(training_losses))
-np.save('logarithmic_precisions_CNN_relu', np.array(training_precisions))
+    np.save('logarithmic_accuracies_CNN_{}'.format(activ), np.array(training_accuracies))
+    np.save('logarithmic_losses_CNN_{}'.format(activ), np.array(training_losses))
+    np.save('logarithmic_precisions_CNN_{}'.format(activ), np.array(training_precisions))
