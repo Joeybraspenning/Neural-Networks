@@ -181,6 +181,7 @@ x_val = np.expand_dims(x_val, axis=3)
 
 # y_val = np.reshape(y_val, (y_val.shape[0], y_val.shape[1]*y_val.shape[2]))
 
+x_test = np.expand_dims(x_test, axis=3)
 
 # x_train = to_categorical(x_train)
 # y_train = to_categorical(y_train)
@@ -272,7 +273,7 @@ for iteration in range(1, 2000):
     hist = model.fit(x_train, y_train,
               batch_size=BATCH_SIZE,
               epochs=1,
-              validation_data=(x_val, y_val))
+              validation_data=(x_val, y_val), shuffle=True)
     # Select 10 samples from the validation set at random so we can visualize
     # errors.
 
@@ -336,10 +337,22 @@ for iteration in range(1, 2000):
 ################################################################################
 ################################################################################
 ################################################################################
-
-scores = model.evaluate(x_test, y_test, verbose=1)
-print('-----------------------------------------')
-print('Test accuracy: ', scores[1])
+full, one_off = 0, 0
+predict = model.predict_classes(x_test, verbose=0)
+for i in range(len(x_test)):
+    correct = ctable.decode(y_test[i])
+    guess = ctable.decode(predict[i], calc_argmax=False)
+    if correct == guess:
+        full += 1
+    elif match(correct, guess):
+        one_off += 1
+print('{}% of test examples are completely correct'.format(100.
+*float(full)/len(x_val)))
+print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_val)))
+            
+# scores = model.evaluate(x_test, y_test, verbose=1)
+# print('-----------------------------------------')
+# print('Test accuracy: ', scores[1])
 
 # np.save('scientific_notation_accuracies_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_accuracies))
 # np.save('scientific_notation_losses_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_losses))
