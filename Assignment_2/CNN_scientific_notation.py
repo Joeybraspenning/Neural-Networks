@@ -252,7 +252,7 @@ training_losses = []
 training_precisions = []
 # Train the model each generation and show predictions against the validation
 # dataset.
-for iteration in range(1, 200):
+for iteration in range(1, 2000):
     print()
     print('-' * 50)
     print('Iteration', iteration)
@@ -271,9 +271,9 @@ for iteration in range(1, 200):
         ind = np.random.randint(0, len(x_val))
         rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
         preds = model.predict_classes(rowx, verbose=0)
-        print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
-        print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
-        print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
+        # print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
+        # print(type(rowy), type(np.array(rowy)), rowy.shape, rowy[0].shape)
+        # print(type(preds), type(np.array(preds)), preds.shape, preds[0].shape)
 
         rowx = np.squeeze(rowx, axis=3)
         # rowy = np.reshape(rowy, (rowy.shape[0], 9, 14))
