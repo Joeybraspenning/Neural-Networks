@@ -271,7 +271,7 @@ training_losses = []
 training_precisions = []
 # Train the model each generation and show predictions against the validation
 # dataset.
-for iteration in range(1, 2000):
+for iteration in range(1, 200):
     print()
     print('-' * 50)
     print('Iteration', iteration)
