@@ -104,7 +104,7 @@ def generate_data_set(n_items, input_len, n_decimals):
 # Tunable parameters
 TRAINING_SIZE = 5000
 TEST_SIZE = 1000
-INPUT_LEN = 10 # The maximum number of digits in the input integers
+INPUT_LEN = 9 # The maximum number of digits in the input integers
 DECIMALS = 3 # the number of decimals in the scientific notation
 
 # This number is fixed
