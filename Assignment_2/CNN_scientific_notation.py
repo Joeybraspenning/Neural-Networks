@@ -259,8 +259,8 @@ for iteration in range(1, 200):
         ind = np.random.randint(0, len(x_val))
         rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
         preds = model.predict_classes(rowx, verbose=0)
-        # rowx = np.squeeze(rowx, axis=3)
-        # rowy = np.squeeze(rowy, axis=3)
+        rowx = np.squeeze(rowx, axis=3)
+        rowy = np.squeeze(rowy, axis=3)
         # preds = np.squeeze(preds, axis=3)
         print(type(rowx), type(np.array(rowx)), rowx.shape, rowx[0].shape)
         q = ctable.decode(rowx[0])
