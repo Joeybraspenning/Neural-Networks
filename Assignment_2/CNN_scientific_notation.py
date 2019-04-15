@@ -255,8 +255,10 @@ for iteration in range(1, 200):
     training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
 
     for i in range(10):
-        ind = np.random.randint(0, len(x_val))
-        rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
+        x_valt = np.squeeze(x_val, axis=3)
+        y_valt = np.squeeze(y_val, axis=3)
+        ind = np.random.randint(0, len(x_valt))
+        rowx, rowy = x_valt[np.array([ind])], y_valt[np.array([ind])]
         preds = model.predict_classes(rowx, verbose=0)
         q = ctable.decode(rowx[0])
         correct = ctable.decode(rowy[0])
