@@ -176,6 +176,19 @@ x_val = np.expand_dims(x_val, axis=3)
 y_val = np.expand_dims(y_val, axis=3)
 
 
+print('Training Data:')
+print(x_train.shape)
+print(y_train.shape)
+
+print('Validation Data:')
+print(x_val.shape)
+print(y_val.shape)
+
+print('Test Data:')
+print(x_val.shape)
+print(y_val.shape)
+
+
 print('Build model...')
 model = Sequential()
 # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
