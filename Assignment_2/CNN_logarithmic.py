@@ -221,17 +221,17 @@ model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.4))
 
-model.add(Conv2D(32, (5, 5), padding='same'))
+model.add(Conv2D(32, (6, 6), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.4))
 
-model.add(Conv2D(16, (3,3), padding='same'))
+model.add(Conv2D(16, (6,6), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.4))
 
-model.add(Conv2D(1, (2,2), padding='same'))
+model.add(Conv2D(1, (3,3), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 
