@@ -169,7 +169,7 @@ print(y_val.shape)
 # Try replacing GRU, or SimpleRNN.
 # RNN = layers.LSTM
 # HIDDEN_SIZE = 128
-BATCH_SIZE = 128
+BATCH_SIZE = 512
 # LAYERS = 1
 
 x_train = np.expand_dims(x_train, axis=3)
@@ -352,13 +352,13 @@ for i in range(len(x_test)):
     elif match(correct, guess):
         one_off += 1
 print('{}% of test examples are completely correct'.format(100.
-*float(full)/len(x_val)))
-print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_val)))
+*float(full)/len(x_test)))
+print('{}% of test examples are one off'.format(100.*float(one_off)/len(x_test)))
             
 # scores = model.evaluate(x_test, y_test, verbose=1)
 # print('-----------------------------------------')
 # print('Test accuracy: ', scores[1])
 
-# np.save('scientific_notation_accuracies_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_accuracies))
-# np.save('scientific_notation_losses_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_losses))
-# np.save('scientific_notation_precisions_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_precisions))
+np.save('logarithmic_accuracies_CNN', np.array(training_accuracies))
+np.save('logarithmic_losses_CNN', np.array(training_losses))
+np.save('logarithmic_precisions_CNN', np.array(training_precisions))
