@@ -2,6 +2,7 @@ from __future__ import print_function
 from keras import callbacks
 from keras.callbacks import CSVLogger
 from keras.models import Sequential
+from keras import layers
 from keras.layers import Dense, Activation, Dropout, Reshape, Conv2D
 from keras.layers import MaxPooling2D, Flatten
 from keras.layers.normalization import BatchNormalization
@@ -172,9 +173,13 @@ BATCH_SIZE = 128
 # LAYERS = 1
 
 x_train = np.expand_dims(x_train, axis=3)
-y_train = np.reshape(y_train, (y_train.shape[0], y_train.shape[1]*y_train.shape[2]))
+y_train = np.expand_dims(y_train, axis=3)
+
+# y_train = np.reshape(y_train, (y_train.shape[0], y_train.shape[1]*y_train.shape[2]))
 x_val = np.expand_dims(x_val, axis=3)
-y_val = np.reshape(y_val, (y_val.shape[0], y_val.shape[1]*y_val.shape[2]))
+y_val = np.expand_dims(y_val, axis=3)
+
+# y_val = np.reshape(y_val, (y_val.shape[0], y_val.shape[1]*y_val.shape[2]))
 
 
 # x_train = to_categorical(x_train)
@@ -221,6 +226,9 @@ model.add(Dropout(0.25))
 model.add(Conv2D(9, (5, 5), padding='same'))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('softmax'))
+
+model.add(layers.TimeDistributed(layers.Conv2D(1, (5,5), padding='same', activation='softmax')))
+
 
 model.add(Flatten())
 
