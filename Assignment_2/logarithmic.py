@@ -161,98 +161,114 @@ print(y_val.shape)
 ################################################################################
 ################################################################################
 ################################################################################
+for HIDDEN_SIZE in [64, 128, 256, 1024]:
+    for BATCH_SIZE in [64, 128, 256, 1024]:
+        for LAYERS in [1, 2, 3, 10]:
+            # Try replacing GRU, or SimpleRNN.
+            RNN = layers.LSTM
+            # HIDDEN_SIZE = 256
+            # BATCH_SIZE = 64
+            # LAYERS = 2
 
-# Try replacing GRU, or SimpleRNN.
-RNN = layers.LSTM
-HIDDEN_SIZE = 256
-BATCH_SIZE = 64
-LAYERS = 2
+            print('Build model...')
+            model = Sequential()
+            # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
+            # Note: In a situation where your input sequences have a variable length,
+            # use input_shape=(None, num_feature).
+            model.add(RNN(HIDDEN_SIZE, input_shape=(INPUT_LEN, len(chars)), activation=layers.PReLU(), recurrent_activation='sigmoid',\
+                            dropout=0.1, recurrent_dropout=0.05))
+            model.add(BatchNormalization(center=True, scale=True))
+            # As the decoder RNN's input, repeatedly provide with the last output of
+            # RNN for each time step. Repeat 'DIGITS + 1' times as that's the maximum
+            # length of output, e.g., when DIGITS=3, max output is 999+999=1998.
+            model.add(layers.RepeatVector(OUTPUT_LEN))
+            model.add(BatchNormalization(center=True, scale=True))
+            # The decoder RNN could be multiple layers stacked or a single layer.
+            for _ in range(LAYERS):
+                # By setting return_sequences to True, return not only the last output but
+                # all the outputs so far in the form of (num_samples, timesteps,
+                # output_dim). This is necessary as TimeDistributed in the below expects
+                # the first dimension to be the timesteps.
+                model.add(RNN(HIDDEN_SIZE, return_sequences=True, activation=layers.PReLU(), recurrent_activation='sigmoid',\
+                                dropout=0.1, recurrent_dropout = 0.05))
+                model.add(BatchNormalization(center=True, scale=True))
+            # Apply a dense layer to the every temporal slice of an input. For each of step
+            # of the output sequence, decide which character should be chosen.
+            model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
+            model.compile(loss='categorical_crossentropy',
+                          optimizer='Nadam',
+                          metrics=['accuracy'])
+            model.summary()
 
-print('Build model...')
-model = Sequential()
-# "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
-# Note: In a situation where your input sequences have a variable length,
-# use input_shape=(None, num_feature).
-model.add(RNN(HIDDEN_SIZE, input_shape=(INPUT_LEN, len(chars)), activation=layers.PReLU(), recurrent_activation='sigmoid',\
-                dropout=0.1, recurrent_dropout=0.05))
-model.add(BatchNormalization(center=True, scale=True))
-# As the decoder RNN's input, repeatedly provide with the last output of
-# RNN for each time step. Repeat 'DIGITS + 1' times as that's the maximum
-# length of output, e.g., when DIGITS=3, max output is 999+999=1998.
-model.add(layers.RepeatVector(OUTPUT_LEN))
-model.add(BatchNormalization(center=True, scale=True))
-# The decoder RNN could be multiple layers stacked or a single layer.
-for _ in range(LAYERS):
-    # By setting return_sequences to True, return not only the last output but
-    # all the outputs so far in the form of (num_samples, timesteps,
-    # output_dim). This is necessary as TimeDistributed in the below expects
-    # the first dimension to be the timesteps.
-    model.add(RNN(HIDDEN_SIZE, return_sequences=True, activation=layers.PReLU(), recurrent_activation='sigmoid',\
-                    dropout=0.1, recurrent_dropout = 0.05))
-    model.add(BatchNormalization(center=True, scale=True))
-# Apply a dense layer to the every temporal slice of an input. For each of step
-# of the output sequence, decide which character should be chosen.
-model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
-model.compile(loss='categorical_crossentropy',
-              optimizer='Nadam',
-              metrics=['accuracy'])
-model.summary()
+            training_accuracies = []
+            training_losses = []
 
-training_accuracies = []
-training_losses = []
+            # Train the model each generation and show predictions against the validation
+            # dataset.
+            for iteration in range(1, 200):
+                print()
+                print('-' * 50)
+                print('Iteration', iteration)
+                hist = model.fit(x_train, y_train,
+                          batch_size=BATCH_SIZE,
+                          epochs=1,
+                          validation_data=(x_val, y_val))
+                # Select 10 samples from the validation set at random so we can visualize
+                # errors.
 
-# Train the model each generation and show predictions against the validation
-# dataset.
-for iteration in range(1, 100):
-    print()
-    print('-' * 50)
-    print('Iteration', iteration)
-    hist = model.fit(x_train, y_train,
-              batch_size=BATCH_SIZE,
-              epochs=1,
-              validation_data=(x_val, y_val))
-    # Select 10 samples from the validation set at random so we can visualize
-    # errors.
+                #print(hist.history)
+                training_accuracies.append([hist.history['acc'][0], hist.history['val_acc'][0]])
+                training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
 
-    #print(hist.history)
-    training_accuracies.append([hist.history['acc'][0], hist.history['val_acc'][0]])
-    training_losses.append([hist.history['loss'][0], hist.history['val_loss'][0]])
+                for i in range(10):
+                    ind = np.random.randint(0, len(x_val))
+                    rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
+                    preds = model.predict_classes(rowx, verbose=0)
+                    q = ctable.decode(rowx[0])
+                    correct = ctable.decode(rowy[0])
+                    guess = ctable.decode(preds[0], calc_argmax=False)
 
-    for i in range(10):
-        ind = np.random.randint(0, len(x_val))
-        rowx, rowy = x_val[np.array([ind])], y_val[np.array([ind])]
-        preds = model.predict_classes(rowx, verbose=0)
-        q = ctable.decode(rowx[0])
-        correct = ctable.decode(rowy[0])
-        guess = ctable.decode(preds[0], calc_argmax=False)
+                    print('Q', q, end=' ')
+                    print('T', correct, end=' ')
+                    if correct == guess:
+                        print('OK', end=' ')
+                    else:
+                        print('..', end=' ')
+                    print(guess)
+                    
+                full, one_off = 0, 0
+                predict = model.predict_classes(x_val, verbose=0)
+                for i in range(len(x_val)):
+                    correct = ctable.decode(y_val[i])
+                    guess = ctable.decode(predict[i], calc_argmax=False)
+                    if correct == guess:
+                        full += 1
+                    elif match(correct, guess):
+                        one_off += 1
+                print('{}% of validation examples are completely correct'.format(100.
+                *float(full)/len(x_val)))
+                print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
+                    
 
-        print('Q', q, end=' ')
-        print('T', correct, end=' ')
-        if correct == guess:
-            print('OK', end=' ')
-        else:
-            print('..', end=' ')
-        print(guess)
-        
-    full, one_off = 0, 0
-    predict = model.predict_classes(x_val, verbose=0)
-    for i in range(len(x_val)):
-        correct = ctable.decode(y_val[i])
-        guess = ctable.decode(predict[i], calc_argmax=False)
-        if correct == guess:
-            full += 1
-        elif match(correct, guess):
-            one_off += 1
-    print('{}% of validation examples are completely correct'.format(100.
-    *float(full)/len(x_val)))
-    print('{}% of validation examples are one off'.format(100.*float(one_off)/len(x_val)))
-################################################################################
-################################################################################
-################################################################################
+                full_train, one_off_train = 0, 0
+                predict = model.predict_classes(x_train, verbose=0)
+                for i in range(len(x_train)):
+                    correct = ctable.decode(y_train[i])
+                    guess = ctable.decode(predict[i], calc_argmax=False)
+                    if correct == guess:
+                        full_train += 1
+                    elif match(correct, guess):
+                        one_off_train += 1
+                training_precisions.append([float(full_train)/len(x_train), float(one_off_train)/len(x_train), float(full)/len(x_val), float(one_off)/len(x_val)])
 
-scores = model.evaluate(x_test, y_test, verbose=1)
-print('-----------------------------------------')
-print('Test accuracy: ', scores[1])
+            ################################################################################
+            ################################################################################
+            ################################################################################
 
-np.save('training_accuracies', np.array(training_accuracies))
-np.save('training_losses', np.array(training_losses))
+            scores = model.evaluate(x_test, y_test, verbose=1)
+            print('-----------------------------------------')
+            print('Test accuracy: ', scores[1])
+
+            np.save('logarithmic_accuracies_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_accuracies))
+            np.save('logarithmic_losses_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_losses))
+            np.save('logarithmic_precisions_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_precisions))
