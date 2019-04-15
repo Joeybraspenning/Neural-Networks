@@ -169,7 +169,7 @@ print(y_val.shape)
 # Try replacing GRU, or SimpleRNN.
 # RNN = layers.LSTM
 # HIDDEN_SIZE = 128
-BATCH_SIZE = 512
+BATCH_SIZE = 64
 # LAYERS = 1
 
 x_train = np.expand_dims(x_train, axis=3)
