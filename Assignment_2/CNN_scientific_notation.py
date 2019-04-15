@@ -167,8 +167,14 @@ print(y_val.shape)
 # Try replacing GRU, or SimpleRNN.
 # RNN = layers.LSTM
 # HIDDEN_SIZE = 128
-# BATCH_SIZE = 128
+BATCH_SIZE = 128
 # LAYERS = 1
+
+x_train = np.expand_dims(x_train, axis=3)
+y_train = np.expand_dims(y_train, axis=3)
+x_val = np.expand_dims(x_val, axis=3)
+y_val = np.expand_dims(y_val, axis=3)
+
 
 print('Build model...')
 model = Sequential()
@@ -204,6 +210,12 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 model.summary()
 
+
+hist = model.fit(x_train, y_train,
+          batch_size=BATCH_SIZE,
+          epochs=100,
+          validation_data=(x_val, y_val))
+'''
 training_accuracies = []
 training_losses = []
 training_precisions = []
@@ -278,3 +290,4 @@ print('Test accuracy: ', scores[1])
 # np.save('scientific_notation_accuracies_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_accuracies))
 # np.save('scientific_notation_losses_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_losses))
 # np.save('scientific_notation_precisions_{}_{}_{}'.format(HIDDEN_SIZE, BATCH_SIZE, LAYERS), np.array(training_precisions))
+'''
