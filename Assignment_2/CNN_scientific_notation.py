@@ -5,6 +5,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Reshape, Conv2D
 from keras.layers import MaxPooling2D, Flatten
 from keras.layers.normalization import BatchNormalization
+from keras.utils import to_categorical
 import tensorflow as tf
 import numpy as np
 from six.moves import range
@@ -176,6 +177,11 @@ x_val = np.expand_dims(x_val, axis=3)
 y_val = np.expand_dims(y_val, axis=3)
 
 
+# x_train = to_categorical(x_train)
+# y_train = to_categorical(y_train)
+# x_val = to_categorical(x_val)
+# y_val = to_categorical(y_val)
+
 print('Training Data:')
 print(x_train.shape)
 print(y_train.shape)
@@ -187,6 +193,8 @@ print(y_val.shape)
 print('Test Data:')
 print(x_val.shape)
 print(y_val.shape)
+
+
 
 
 print('Build model...')
@@ -217,8 +225,7 @@ model.add(Activation('softmax'))
 model.add(Dropout(0.25))            
 
 
-
-model.compile(loss='sparse_categorical_crossentropy',
+model.compile(loss='binary_crossentropy',
               optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
