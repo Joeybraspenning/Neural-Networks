@@ -271,7 +271,7 @@ for activ in ['relu', 'tanh', 'sigmoid']:
     training_precisions = []
     # Train the model each generation and show predictions against the validation
     # dataset.
-    for iteration in range(1, 200):
+    for iteration in range(1, 400):
         print()
         print('-' * 50)
         print('Iteration', iteration)
