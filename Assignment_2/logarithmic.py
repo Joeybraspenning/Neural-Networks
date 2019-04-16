@@ -206,7 +206,7 @@ for HIDDEN_SIZE in [64, 128, 256, 1024]:
 
             # Train the model each generation and show predictions against the validation
             # dataset.
-            for iteration in range(1, 200):
+            for iteration in range(1, 2*LAYERS):
                 print()
                 print('-' * 50)
                 print('Iteration', iteration)
