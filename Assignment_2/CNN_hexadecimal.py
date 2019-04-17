@@ -114,7 +114,7 @@ DECIMALS = 3 # the number of decimals in the scientific notation
 # This number is fixed
 OUTPUT_LEN = 5
 
-chars = '0123456789abcdef '
+chars = '0123456789 abcdef'
 ctable = CharacterTable(chars)
 
 questions = []
