@@ -210,7 +210,7 @@ for activ in ['relu', 'tanh', 'sigmoid']:
     # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
     # Note: In a situation where your input sequences have a variable length,
     # use input_shape=(None, num_feature).
-    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(4, 1)))
+    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(4, 4)))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
@@ -251,7 +251,7 @@ for activ in ['relu', 'tanh', 'sigmoid']:
 
     # model.add(MaxPooling2D(1))
 
-    model.add(Reshape((7, 14)))
+    model.add(Reshape((5, 17)))
 
     model.add(layers.TimeDistributed(layers.Dense(len(chars), activation='softmax')))
 
