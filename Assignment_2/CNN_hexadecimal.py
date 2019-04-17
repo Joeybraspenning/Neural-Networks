@@ -213,22 +213,22 @@ for activ in ['relu']:
     model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(5, 9), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.35))
 
     model.add(Conv2D(256, (5, 7), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.35))
 
     model.add(Conv2D(128, (4, 4), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.35))
 
     model.add(Conv2D(64, (2, 4), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.35))
 
     # model.add(Conv2D(32, (4,4), padding='same'))
     # model.add(BatchNormalization(center=True, scale=True))
