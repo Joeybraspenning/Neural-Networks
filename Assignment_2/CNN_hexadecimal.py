@@ -203,7 +203,7 @@ print('Test Data:')
 print(x_val.shape)
 print(y_val.shape)
 
-for activ in ['relu', 'tanh', 'sigmoid']:
+for activ in ['relu']:
 
     print('Build model...')
     model = Sequential()
@@ -361,6 +361,6 @@ for activ in ['relu', 'tanh', 'sigmoid']:
     # print('-----------------------------------------')
     # print('Test accuracy: ', scores[1])
 
-    np.save('logarithmic_accuracies_CNN_2nd_{}'.format(activ), np.array(training_accuracies))
-    np.save('logarithmic_losses_CNN_2nd_{}'.format(activ), np.array(training_losses))
-    np.save('logarithmic_precisions_CNN_2nd_{}'.format(activ), np.array(training_precisions))
+    np.save('hexadecimal_accuracies_CNN', np.array(training_accuracies))
+    np.save('hexadecimal_losses_CNN', np.array(training_losses))
+    np.save('hexadecimal_precisions_CNN', np.array(training_precisions))
