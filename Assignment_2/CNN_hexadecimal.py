@@ -210,27 +210,27 @@ for activ in ['relu']:
     # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
     # Note: In a situation where your input sequences have a variable length,
     # use input_shape=(None, num_feature).
-    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(4, 4), padding='same'))
+    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(6, 9), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(256, (8, 8), padding='same'))
+    model.add(Conv2D(256, (5, 8), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(128, (6, 6), padding='same'))
+    model.add(Conv2D(128, (5, 5), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(64, (6, 6), padding='same'))
+    model.add(Conv2D(64, (5, 5), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(32, (5,5), padding='same'))
+    model.add(Conv2D(32, (4,4), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.5))
@@ -245,7 +245,7 @@ for activ in ['relu']:
     model.add(Activation(activ))
     model.add(Dropout(0.5))
 
-    model.add(Conv2D(1, (3,3), padding='same'))
+    model.add(Conv2D(1, (2,2), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
 
