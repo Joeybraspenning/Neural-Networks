@@ -245,7 +245,7 @@ for activ in ['relu']:
     # model.add(Activation(activ))
     # model.add(Dropout(0.25))
 
-    model.add(Conv2D(1, (2,2), padding='same'))
+    model.add(Conv2D(1, (5,17), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
 
