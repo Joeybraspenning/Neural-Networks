@@ -210,7 +210,7 @@ for activ in ['relu']:
     # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
     # Note: In a situation where your input sequences have a variable length,
     # use input_shape=(None, num_feature).
-    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(5, 9), padding='same'))
+    model.add(Conv2D(512, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(5, 9), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
     model.add(Dropout(0.25))
