@@ -114,7 +114,7 @@ DECIMALS = 3 # the number of decimals in the scientific notation
 # This number is fixed
 OUTPUT_LEN = 5
 
-chars = '0123456789abcdef '
+chars = '0123456789 abcdef'
 ctable = CharacterTable(chars)
 
 questions = []
@@ -203,49 +203,49 @@ print('Test Data:')
 print(x_val.shape)
 print(y_val.shape)
 
-for activ in ['relu', 'tanh', 'sigmoid']:
+for activ in ['relu']:
 
     print('Build model...')
     model = Sequential()
     # "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.
     # Note: In a situation where your input sequences have a variable length,
     # use input_shape=(None, num_feature).
-    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(4, 4)))
+    model.add(Conv2D(256, input_shape = (INPUT_LEN, len(chars), 1), kernel_size=(9, 9), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.40))
 
-    model.add(Conv2D(256, (8, 8), padding='same'))
+    model.add(Conv2D(256, (7, 7), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.40))
 
-    model.add(Conv2D(128, (6, 6), padding='same'))
+    model.add(Conv2D(128, (4, 4), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.40))
 
-    model.add(Conv2D(64, (6, 6), padding='same'))
+    model.add(Conv2D(64, (2, 2), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.40))
 
-    model.add(Conv2D(32, (5,5), padding='same'))
-    model.add(BatchNormalization(center=True, scale=True))
-    model.add(Activation(activ))
-    model.add(Dropout(0.5))
+    # model.add(Conv2D(32, (4,4), padding='same'))
+    # model.add(BatchNormalization(center=True, scale=True))
+    # model.add(Activation(activ))
+    # model.add(Dropout(0.25))
 
-    model.add(Conv2D(32, (3,3), padding='same'))
-    model.add(BatchNormalization(center=True, scale=True))
-    model.add(Activation(activ))
-    model.add(Dropout(0.5))
+    # model.add(Conv2D(32, (3,3), padding='same'))
+    # model.add(BatchNormalization(center=True, scale=True))
+    # model.add(Activation(activ))
+    # model.add(Dropout(0.25))
 
-    model.add(Conv2D(16, (3,3), padding='same'))
-    model.add(BatchNormalization(center=True, scale=True))
-    model.add(Activation(activ))
-    model.add(Dropout(0.5))
+    # model.add(Conv2D(16, (3,3), padding='same'))
+    # model.add(BatchNormalization(center=True, scale=True))
+    # model.add(Activation(activ))
+    # model.add(Dropout(0.25))
 
-    model.add(Conv2D(1, (3,3), padding='same'))
+    model.add(Conv2D(1, (5,5), padding='same'))
     model.add(BatchNormalization(center=True, scale=True))
     model.add(Activation(activ))
 
@@ -361,6 +361,6 @@ for activ in ['relu', 'tanh', 'sigmoid']:
     # print('-----------------------------------------')
     # print('Test accuracy: ', scores[1])
 
-    np.save('logarithmic_accuracies_CNN_2nd_{}'.format(activ), np.array(training_accuracies))
-    np.save('logarithmic_losses_CNN_2nd_{}'.format(activ), np.array(training_losses))
-    np.save('logarithmic_precisions_CNN_2nd_{}'.format(activ), np.array(training_precisions))
+    np.save('hexadecimal_accuracies_CNN', np.array(training_accuracies))
+    np.save('hexadecimal_losses_CNN', np.array(training_losses))
+    np.save('hexadecimal_precisions_CNN', np.array(training_precisions))
