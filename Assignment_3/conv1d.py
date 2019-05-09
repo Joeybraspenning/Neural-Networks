@@ -49,6 +49,8 @@ for i, string in enumerate(categories_test):
       out = (out << 1) | bit
    categorical_test[i, out] = 1
 
+print(spectra_train.shape)
+print(spectra_test.shape)
 
 #categories_train
 #categories_train = keras.utils.to_categorical(categories_train, 128)
