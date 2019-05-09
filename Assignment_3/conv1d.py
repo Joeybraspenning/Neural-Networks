@@ -3,7 +3,6 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten
 from keras.datasets import mnist
 from keras.layers.normalization import BatchNormalization
-import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 
