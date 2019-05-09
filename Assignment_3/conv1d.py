@@ -71,36 +71,42 @@ def step_func(x):
 model = Sequential()
 
 model.add(Conv1D(64, 32, padding='same', input_shape=(428,1)))
-model.add(BatchNormalization())
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.5))
+
+# model.add(Conv1D(64,32, padding='same'))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(0.5))
+
+model.add(MaxPooling1D(2))
 
 model.add(Conv1D(32,16, padding='same'))
-model.add(BatchNormalization())
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.5))
 
-model.add(MaxPooling1D(4))
+model.add(MaxPooling1D(2))
 
-model.add(Conv1D(1, 1, padding='same'))
 model.add(Flatten())
-model.add(Dense(100))
-model.add(BatchNormalization())
+model.add(Dense(1000))
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.5))
+
+model.add(Dense(200))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
 
 model.add(Dense(50))
-model.add(BatchNormalization())
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.2))
-
-model.add(Dense(20))
-model.add(BatchNormalization())
-model.add(Activation('relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.5))
 
 model.add(Dense(7))
-model.add(BatchNormalization())
+model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('sigmoid'))
 
 
@@ -114,7 +120,7 @@ model.summary()
 for i in range(100):
    print(i)
    hist = model.fit(spectra_train, categories_train,
-           batch_size=16,
+           batch_size=256,
            epochs=1,
            validation_data=(spectra_test, categories_test))
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
