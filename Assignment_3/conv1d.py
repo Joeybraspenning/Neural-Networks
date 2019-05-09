@@ -1,8 +1,8 @@
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten
-from keras.datasets import mnist
-from keras.layers.normalization import BatchNormalization
+# import keras
+# from keras.models import Sequential
+# from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten
+# from keras.datasets import mnist
+# from keras.layers.normalization import BatchNormalization
 import numpy as np
 import pickle
 
@@ -15,11 +15,17 @@ def load_obj(name ):
         return pickle.load(f)
 
 
-spectra = load_obj('./bachelor_data/spectra_matrix_exp2.pickle')
-categories = load_obj('./bachelor_data/input_matrix_exp2.pickle')[:, :, 0]
+# spectra = load_obj('./bachelor_data/spectra_matrix_exp2.pickle')
+# categories = load_obj('./bachelor_data/input_matrix_exp2.pickle')[:, :, 0]
 
-print(spectra.shape)
-print(categories.shape)
+# print(spectra.shape)
+# print(categories.shape)
+
+# np.save('spectra', spectra)
+# np.save('categories', categories)
+
+spectra = np.load('spectra.npy')
+categories = np.load('categories.npy')
 
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
