@@ -1,6 +1,6 @@
 import keras
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten
+from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten, MaxPooling2D
 from keras.datasets import mnist
 from keras.layers.normalization import BatchNormalization
 import numpy as np
@@ -75,32 +75,32 @@ model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-# model.add(Conv1D(64,32, padding='same'))
-# model.add(BatchNormalization(center=True, scale=True))
-# model.add(Activation('relu'))
-# model.add(Dropout(0.5))
-
-model.add(MaxPooling1D(2))
-
-model.add(Conv1D(32,16, padding='same'))
+model.add(Conv1D(32,32))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(MaxPooling1D(2))
+# model.add(MaxPooling1D(4))
+
+model.add(Conv1D(16,16))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(MaxPooling1D(4))
 
 model.add(Flatten())
-model.add(Dense(1000))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Dense(200))
+model.add(Dense(100))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(50))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Dense(25))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
@@ -120,10 +120,10 @@ model.summary()
 for i in range(100):
    print(i)
    hist = model.fit(spectra_train, categories_train,
-           batch_size=256,
+           batch_size=64,
            epochs=1,
-           validation_data=(spectra_test, categories_test))
+           validation_data=(spectra_test, categories_test), shuffle=True)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    predict = model.predict(spectra_test[predict_idx, :,:])
    for j in range(10):
-      print(list(categories_test[predict_idx[j],:]), '-----', list(np.round(predict[j])))
+      print(list(categories_test[predict_idx[j],:]), '-----', list(predict[j]))
