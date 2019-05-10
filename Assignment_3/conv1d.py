@@ -78,26 +78,31 @@ def step_func(x):
 
 model = Sequential()
 
-model.add(Conv1D(64, 64, padding='same', input_shape=(428,1)))
+model.add(Conv1D(64, 32, padding='same', input_shape=(428,1)))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Conv1D(32,32))
+model.add(Conv1D(32,16))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(MaxPooling1D(4))
+# model.add(MaxPooling1D(4))
 
-model.add(Conv1D(16,16))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
+# model.add(Conv1D(16,16))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(0.5))
 
-model.add(MaxPooling1D(2))
+# model.add(MaxPooling1D(2))
 
-model.add(Conv1D(16,8))
+# model.add(Conv1D(16,8))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(0.5))
+
+model.add(Conv1D(1,1))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
