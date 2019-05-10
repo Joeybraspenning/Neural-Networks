@@ -139,6 +139,12 @@ for i in range(1000):
            epochs=1,
            validation_data=(spectra_test, categories_test), shuffle=True)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
-   predict = model.predict(spectra_test[predict_idx, :,:])
-   for j in range(10):
-      print(list(categories_test[predict_idx[j],:]), '-----', list(predict[j]))
+   predict_test = model.predict(spectra_test[predict_idx[:5], :,:])
+   predict_train = model.predict(spectra_train[predict_idx[5:], :,:])
+
+   print('test')
+   for j in np.arange(0,5,1):
+      print(list(categories_test[predict_idx[j],:]), '-----', list(predict_test[j]))
+   print('train')
+   for j in np.arange(5,10,1):
+      print(list(categories_train[predict_idx[j],:]), '-----', list(predict_train[j-5]))
