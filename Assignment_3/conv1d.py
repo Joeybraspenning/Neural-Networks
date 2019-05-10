@@ -17,16 +17,16 @@ import tensorflow as tf
 
 
 # spectra = load_obj('./bachelor_data/spectra_matrix_exp2.pickle')
-# categories = load_obj('./bachelor_data/input_matrix_exp2.pickle')[:, :, 0]
+# abundances = load_obj('./bachelor_data/input_matrix_exp2.pickle')[:, :, 1]
 
 # print(spectra.shape)
-# print(categories.shape)
+# print(abundances.shape)
 
 # np.save('spectra', spectra)
-# np.save('categories', categories)
+# np.save('abundances', abundances)
 
 spectra = np.load('spectra.npy')
-categories = np.load('categories.npy')
+categories = np.log10(np.load('abundances.npy'))
 
 print(np.max(spectra, axis=1).shape)
 spectra = spectra.T / np.max(spectra, axis=1)
@@ -40,8 +40,10 @@ train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
 spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
 spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
-categories_train = np.array(categories[train_idx, :], dtype='int')
-categories_test = np.array(categories[test_idx, :], dtype='int')
+# categories_train = np.array(categories[train_idx, :], dtype='int')
+# categories_test = np.array(categories[test_idx, :], dtype='int')
+categories_train = categories[train_idx, :]
+categories_test = categories[test_idx, :]
 
 # categorical_train = np.zeros((categories_train.shape[0], 128))
 # for i, string in enumerate(categories_train):
@@ -99,27 +101,27 @@ model.add(MaxPooling1D(2))
 model.add(Flatten())
 model.add(Dense(100))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('sigmoid'))
+model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(50))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('sigmoid'))
+model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(25))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('sigmoid'))
+model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(7))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('sigmoid'))
+model.add(Activation('linear'))
 
 
 
 
-model.compile(loss='binary_crossentropy',
+model.compile(loss='mse',
               optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
