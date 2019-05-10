@@ -19,6 +19,9 @@ import tensorflow as tf
 # spectra = load_obj('./bachelor_data/spectra_matrix_exp2.pickle')
 # abundances = load_obj('./bachelor_data/input_matrix_exp2.pickle')[:, :, 1]
 
+
+# print(np.unique(abundances[:,1]))
+
 # print(spectra.shape)
 # print(abundances.shape)
 
@@ -26,14 +29,17 @@ import tensorflow as tf
 # np.save('abundances', abundances)
 
 spectra = np.load('spectra.npy')
-categories = np.log10(np.load('abundances.npy'))
+categories = np.load('categories.npy')
+
+
+print(categories.shape)
 
 print(np.max(spectra, axis=1).shape)
 spectra = spectra.T / np.max(spectra, axis=1)
 spectra = spectra.T
 
 print(spectra.shape)
-print(categories.shape)
+print(np.unique(categories[:,1]))
 
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
@@ -116,7 +122,7 @@ model.add(Dropout(0.5))
 
 model.add(Dense(7))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('linear'))
+model.add(Activation('sigmoid'))
 
 
 
