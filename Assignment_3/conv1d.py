@@ -35,7 +35,8 @@ categories = np.around(np.log10(np.load('abundances_exp1.npy')), decimals=3)
 print(categories.shape)
 
 print(np.max(spectra, axis=1).shape)
-spectra = spectra.T / np.max(spectra, axis=1)
+median = np.median(spectra, axis=1)
+spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
 spectra = spectra.T
 
 print(spectra.shape)
