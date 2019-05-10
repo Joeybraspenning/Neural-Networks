@@ -124,7 +124,7 @@ model.compile(loss='binary_crossentropy',
               metrics=['accuracy'])
 model.summary()
 
-for i in range(100):
+for i in range(1000):
    print(i)
    hist = model.fit(spectra_train, categories_train,
            batch_size=64,
