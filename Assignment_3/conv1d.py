@@ -130,7 +130,7 @@ model.add(Dropout(0.5))
 
 model.add(Dense(7))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('sigmoid'))
+model.add(Activation('linear'))
 
 
 
