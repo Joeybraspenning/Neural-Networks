@@ -90,17 +90,17 @@ model.add(Dropout(0.5))
 model.add(MaxPooling1D(4))
 
 model.add(Flatten())
-model.add(Dense(100))
+model.add(Dense(1000))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Dense(300))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(50))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Dense(25))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
