@@ -152,7 +152,7 @@ for i in range(1000):
 
    print('test')
    for j in np.arange(0,5,1):
-      print(np.argmax(categorical_test[predict_idx[j],:]), '-----', np.argmax(predict_test[j]))
+      print(np.argmax(categories_test[predict_idx[j],:]), '-----', np.argmax(predict_test[j]))
    print('train')
    for j in np.arange(5,10,1):
-      print(np.argmax(categorical_train[predict_idx[j],:]), '-----', np.argmax(predict_train[j-5]))
+      print(np.argmax(categories_train[predict_idx[j],:]), '-----', np.argmax(predict_train[j-5]))
