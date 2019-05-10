@@ -29,7 +29,7 @@ import tensorflow as tf
 # np.save('abundances_exp2', abundances)
 
 spectra = np.load('spectra_exp1.npy')
-categories = np.log10(np.load('abundances_exp1.npy'))
+categories = np.around(np.log10(np.load('abundances_exp1.npy')), decimals=2)
 
 
 print(categories.shape)
