@@ -152,7 +152,7 @@ for i in range(1000):
 
    print('test')
    for j in np.arange(0,5,1):
-      print(list(np.around(categories_test[predict_idx[j],:]), decimals=3), '-----', list(np.around(predict_test[j], decimals=3)))
+      print(list(np.around(categories_test[predict_idx[j],:], decimals=3)), '-----', list(np.around(predict_test[j], decimals=3)))
    print('train')
    for j in np.arange(5,10,1):
       print(list(np.around(categories_train[predict_idx[j],:], decimals=3)), '-----', list(np.around(predict_train[j-5], decimals=3)))
