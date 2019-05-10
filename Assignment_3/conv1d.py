@@ -29,7 +29,7 @@ import tensorflow as tf
 # np.save('abundances_exp2', abundances)
 
 spectra = np.load('spectra_exp1.npy')
-categories = np.around(np.log10(np.load('abundances_exp1.npy')), decimals=2)
+categories = np.around(np.log10(np.load('abundances_exp1.npy')), decimals=3)
 
 
 print(categories.shape)
@@ -152,7 +152,7 @@ for i in range(1000):
 
    print('test')
    for j in np.arange(0,5,1):
-      print(list(categories_test[predict_idx[j],:]), '-----', list(predict_test[j]))
+      print(list(np.around(categories_test[predict_idx[j],:]), decimals=3), '-----', list(np.around(predict_test[j], decimals=3)))
    print('train')
    for j in np.arange(5,10,1):
-      print(list(categories_train[predict_idx[j],:]), '-----', list(predict_train[j-5]))
+      print(list(np.around(categories_train[predict_idx[j],:], decimals=3)), '-----', list(np.around(predict_train[j-5], decimals=3)))
