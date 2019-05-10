@@ -46,32 +46,34 @@ train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
 spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
 spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
-# categories_train = np.array(categories[train_idx, :], dtype='int')
-# categories_test = np.array(categories[test_idx, :], dtype='int')
-categories_train = categories[train_idx, :]
-categories_test = categories[test_idx, :]
+categories_train = np.array(categories[train_idx, :], dtype='int')
+categories_test = np.array(categories[test_idx, :], dtype='int')
+# categories_train = categories[train_idx, :]
+# categories_test = categories[test_idx, :]
 
-# categorical_train = np.zeros((categories_train.shape[0], 128))
-# for i, string in enumerate(categories_train):
-#    out = 0
-#    for bit in list(string):
-#       out = (out << 1) | bit
-#    categorical_train[i, out] = 1
+categorical_train = np.zeros((categories_train.shape[0], 128))
+for i, string in enumerate(categories_train):
+   out = 0
+   for bit in list(string):
+      out = (out << 1) | bit
+   categorical_train[i, out] = 1
 
-# categorical_test = np.zeros((categories_test.shape[0], 128))
-# for i, string in enumerate(categories_test):
-#    out = 0
-#    for bit in list(string):
-#       out = (out << 1) | bit
-#    categorical_test[i, out] = 1
+categorical_test = np.zeros((categories_test.shape[0], 128))
+for i, string in enumerate(categories_test):
+   out = 0
+   for bit in list(string):
+      out = (out << 1) | bit
+   categorical_test[i, out] = 1
 
 print(spectra_train.shape)
 print(spectra_test.shape)
 
+print(categorical_test.shape)
+
 #categories_train
 #categories_train = keras.utils.to_categorical(categories_train, 128)
 #categories_test = keras.utils.to_categorical(categories_test, 7)
-print(categories_train.shape)
+# print(categories_train.shape)
 
 def step_func(x):
   return (tf.math.sign(x) + 1)/2
@@ -107,49 +109,49 @@ model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(MaxPooling1D(2))
+# model.add(MaxPooling1D(2))
 
 model.add(Flatten())
-model.add(Dense(100))
+model.add(Dense(200))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Dense(50))
+model.add(Dense(150))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Dense(25))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
+# model.add(Dense(25))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(0.5))
 
-model.add(Dense(7))
+model.add(Dense(128))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('sigmoid'))
 
 
 
 
-model.compile(loss='binary_crossentropy',
+model.compile(loss='categorical_crossentropy',
               optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
 
 for i in range(1000):
    print(i)
-   hist = model.fit(spectra_train, categories_train,
+   hist = model.fit(spectra_train, categorical_train,
            batch_size=64,
            epochs=1,
-           validation_data=(spectra_test, categories_test), shuffle=True)
+           validation_data=(spectra_test, categorical_test), shuffle=True)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    predict_test = model.predict(spectra_test[predict_idx[:5], :,:])
    predict_train = model.predict(spectra_train[predict_idx[5:], :,:])
 
    print('test')
    for j in np.arange(0,5,1):
-      print(list(categories_test[predict_idx[j],:]), '-----', list(predict_test[j]))
+      print(np.argmax(categorical_test[predict_idx[j],:]), '-----', np.argmax(predict_test[j]))
    print('train')
    for j in np.arange(5,10,1):
-      print(list(categories_train[predict_idx[j],:]), '-----', list(predict_train[j-5]))
+      print(np.argmax(categorical_train[predict_idx[j],:]), '-----', np.argmax(predict_train[j-5]))
