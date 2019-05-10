@@ -127,7 +127,7 @@ model.add(Activation('sigmoid'))
 
 
 
-model.compile(loss='mse',
+model.compile(loss='binary_crossentropy',
               optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
