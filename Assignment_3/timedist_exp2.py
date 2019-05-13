@@ -167,7 +167,7 @@ for i in range(1000):
 
    print('test')
    for j in np.arange(0,5,1):
-      print(list(categories_test[predict_idx[j],:,0]), '-----', list(predict_test[j,0]))
+      print(list(categories_test[predict_idx[j],:,:]), '-----', list(predict_test[j,:]))
    print('train')
    for j in np.arange(5,10,1):
-      print(list(categories_train[predict_idx[j],:,0]), '-----', list(predict_train[j-5,0]))
+      print(list(categories_train[predict_idx[j],:,:]), '-----', list(predict_train[j-5,:]))
