@@ -174,8 +174,8 @@ for num in range(1000):
              batch_size=64,
              epochs=1,
              validation_data=(spectra_test, categories_test[:,i]), shuffle=True)
-     predict_test[:, i] = model[i].predict(spectra_test[predict_idx[:5], :,:])
-     predict_train[:, i]= model[i].predict(spectra_train[predict_idx[5:], :,:])
+     predict_test[:, i] = model[i].predict(spectra_test[predict_idx[:5], :,:]).flatten()
+     predict_train[:, i]= model[i].predict(spectra_train[predict_idx[5:], :,:]).flatten()
 
    print('test')
    for j in np.arange(0,5,1):
