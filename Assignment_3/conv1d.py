@@ -34,13 +34,13 @@ categories = np.around(np.log10(np.load('abundances_exp1.npy')), decimals=2)
 
 print(categories.shape)
 
-print(np.max(spectra, axis=1).shape)
+# print(np.max(spectra, axis=1).shape)
 median = np.median(spectra, axis=1)
 spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
 spectra = spectra.T
 
 print(spectra.shape)
-print(np.unique(categories[:,1]))
+# print(np.unique(categories[:,1]))
 
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
@@ -70,8 +70,8 @@ print(spectra_train.shape)
 print(spectra_test.shape)
 
 # print(categorical_test.shape)
-u, c  = np.unique(categories_train, return_counts=True, axis=0)
-print(u, c)
+# u, c  = np.unique(categories_train, return_counts=True, axis=0)
+# print(u, c)
 #categories_train
 #categories_train = keras.utils.to_categorical(categories_train, 128)
 #categories_test = keras.utils.to_categorical(categories_test, 7)
