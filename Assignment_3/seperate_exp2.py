@@ -137,7 +137,7 @@ for i in range(7):
   # model[i].add(MaxPooling1D(2))
 
   model[i].add(Flatten())
-  model[i].add(Dense(100))
+  model[i].add(Dense(50))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
