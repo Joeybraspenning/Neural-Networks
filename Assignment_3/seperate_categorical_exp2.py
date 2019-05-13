@@ -52,25 +52,28 @@ categories_test = np.array(categories[test_idx, :], dtype='int')
 # categories_train = categories[train_idx, :]
 # categories_test = categories[test_idx, :]
 
-# categorical_train = np.zeros((categories_train.shape[0], 128))
-# for i, string in enumerate(categories_train):
-#    out = 0
-#    for bit in list(string):
-#       out = (out << 1) | bit
-#    categorical_train[i, out] = 1
+categorical_train = np.zeros((categories_train.shape[0], 7, 2))
+for i in range(len(categories_train)):
+  for j, string in enumerate(categories_train[i,:]):
+    if string:
+      categorical_train[i, j, 1] = 1
+    else:
+      categorical_train[i, j, 0] = 1
 
-# categorical_test = np.zeros((categories_test.shape[0], 128))
-# for i, string in enumerate(categories_test):
-#    out = 0
-#    for bit in list(string):
-#       out = (out << 1) | bit
-#    categorical_test[i, out] = 1
+categorical_test = np.zeros((categories_test.shape[0], 7, 2))
+for i in range(len(categories_test)):
+  for j, string in enumerate(categories_test[i,:]):
+    if string:
+      categorical_test[i, j, 1] = 1
+    else:
+      categorical_test[i, j, 0] = 1
+
 
 print(spectra_train.shape)
 print(spectra_test.shape)
 
-print(categories_train.shape)
-print(categories_test.shape)
+print(categorical_train.shape)
+print(categorical_test.shape)
 
 # print(categorical_test.shape)
 # u, c  = np.unique(categories_train, return_counts=True, axis=0)
@@ -171,14 +174,14 @@ for i in range(7):
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
 
-  model[i].add(Dense(1))
+  model[i].add(Dense(2))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('sigmoid'))
 
 
 
 
-  model[i].compile(loss='binary_crossentropy',
+  model[i].compile(loss='categorical_crossentropy',
                 optimizer='Nadam',
                 metrics=['accuracy'])
   model[i].summary()
@@ -189,12 +192,16 @@ for num in range(1000):
    print(num)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    for i in range(7):
-     hist = model[i].fit(spectra_train, categories_train[:,i],
+     hist = model[i].fit(spectra_train, categorical_train[:,i],
              batch_size=64,
              epochs=1,
-             validation_data=(spectra_test, categories_test[:,i]), shuffle=True)
-     predict_test[:, i] = model[i].predict(spectra_test[predict_idx[:5], :,:]).flatten()
-     predict_train[:, i]= model[i].predict(spectra_train[predict_idx[5:], :,:]).flatten()
+             validation_data=(spectra_test, categorical_test[:,i]), shuffle=True)
+     # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
+     # print(np.argmax(categorical_test[predict_idx[:5],i], axis=1))
+     predict_test[:, i] = np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1)
+     predict_train[:, i]= np.argmax(model[i].predict(spectra_train[predict_idx[5:], :,:]), axis=1)
+
+     print(np.sum(np.argmax(model[i].predict(spectra_test), axis=1) == np.argmax(categorical_test[:,i], axis=1))/len(categorical_test))
 
    print('test')
    for j in np.arange(0,5,1):
