@@ -164,19 +164,18 @@ for i in range(7):
                 metrics=['accuracy'])
   model[i].summary()
 
-predict_idx = np.empty(7)
-predict_test= np.empty(7)
-predict_train= np.empty(7)
+predict_test= np.empty(5, 7)
+predict_train= np.empty(5, 7)
 for num in range(1000):
    print(num)
+   predict_idx = np.random.randint(0,0.1*len(idx), 10)
    for i in range(7):
      hist = model[i].fit(spectra_train, categories_train[:,i],
              batch_size=64,
              epochs=1,
              validation_data=(spectra_test, categories_test[:,i]), shuffle=True)
-     predict_idx[i] = np.random.randint(0,0.1*len(idx), 10)
-     predict_test[i] = model[i].predict(spectra_test[predict_idx[:5], :,:])
-     predict_train [i]= model[i].predict(spectra_train[predict_idx[5:], :,:])
+     predict_test[:, i] = model[i].predict(spectra_test[predict_idx[:5], :,:])
+     predict_train[:, i]= model[i].predict(spectra_train[predict_idx[5:], :,:])
 
    print('test')
    for j in np.arange(0,5,1):
