@@ -28,8 +28,8 @@ import tensorflow as tf
 # np.save('spectra_exp1', spectra)
 # np.save('abundances_exp2', abundances)
 
-spectra = np.load('spectra_exp1.npy')
-categories = np.around(np.log10(np.load('abundances_exp1.npy')), decimals=2)
+spectra = np.load('spectra.npy')
+categories = np.load('categories.npy')
 
 
 print(categories.shape)
@@ -136,7 +136,7 @@ model.add(Dropout(0.5))
 
 model.add(Dense(7))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('linear'))
+model.add(Activation('sigmoid'))
 
 
 
@@ -158,7 +158,7 @@ for i in range(1000):
 
    print('test')
    for j in np.arange(0,5,1):
-      print(list(np.around(categories_test[predict_idx[j],:], decimals=2)), '-----', list(np.around(predict_test[j], decimals=2)))
+      print(list(categories_test[predict_idx[j],:]), '-----', list(predict_test[j]))
    print('train')
    for j in np.arange(5,10,1):
-      print(list(np.around(categories_train[predict_idx[j],:], decimals=2)), '-----', list(np.around(predict_train[j-5], decimals=2)))
+      print(list(categories_train[predict_idx[j],:]), '-----', list(predict_train[j-5]))
