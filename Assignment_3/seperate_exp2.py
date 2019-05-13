@@ -47,10 +47,10 @@ train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
 spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
 spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
-# categories_train = np.array(categories[train_idx, :], dtype='int')
-# categories_test = np.array(categories[test_idx, :], dtype='int')
-categories_train = categories[train_idx, :]
-categories_test = categories[test_idx, :]
+categories_train = np.array(categories[train_idx, :], dtype='int')
+categories_test = np.array(categories[test_idx, :], dtype='int')
+# categories_train = categories[train_idx, :]
+# categories_test = categories[test_idx, :]
 
 # categorical_train = np.zeros((categories_train.shape[0], 128))
 # for i, string in enumerate(categories_train):
@@ -100,7 +100,7 @@ for i in range(7):
 
   model[i] = Sequential()
 
-  model[i].add(Conv1D(256, 8, padding='same', input_shape=(428,1)))
+  model[i].add(Conv1D(64, 8, padding='same', input_shape=(428,1)))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
@@ -112,7 +112,7 @@ for i in range(7):
 
   model[i].add(MaxPooling1D(2))
 
-  model[i].add(Conv1D(128,4))
+  model[i].add(Conv1D(32,4))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
@@ -159,7 +159,7 @@ for i in range(7):
 
 
 
-  model[i].compile(loss='mse',
+  model[i].compile(loss='categorical_crossentropy',
                 optimizer='Nadam',
                 metrics=['accuracy'])
   model[i].summary()
@@ -179,7 +179,7 @@ for num in range(1000):
 
    print('test')
    for j in np.arange(0,5,1):
-      print(list(categories_test[predict_idx[j],:,:]), '-----', list(predict_test[j,:]))
+      print(list(categories_test[predict_idx[j],:]), '-----', list(predict_test[j,:]))
    print('train')
    for j in np.arange(5,10,1):
-      print(list(categories_train[predict_idx[j],:,:]), '-----', list(predict_train[j-5,:]))
+      print(list(categories_train[predict_idx[j],:]), '-----', list(predict_train[j-5,:]))
