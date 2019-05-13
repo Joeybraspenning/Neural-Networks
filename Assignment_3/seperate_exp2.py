@@ -164,8 +164,8 @@ for i in range(7):
                 metrics=['accuracy'])
   model[i].summary()
 
-predict_test= np.empty(5, 7)
-predict_train= np.empty(5, 7)
+predict_test= np.empty((5, 7))
+predict_train= np.empty((5, 7))
 for num in range(1000):
    print(num)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
