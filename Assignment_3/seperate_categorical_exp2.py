@@ -5,15 +5,15 @@ from keras.datasets import mnist
 from keras.layers.normalization import BatchNormalization
 import numpy as np
 import tensorflow as tf
-# import pickle
+import pickle
 
-# def save_obj(obj, name ):
-#     with open(name + '.pkl', 'wb') as f:
-#         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+def save_obj(obj, name ):
+    with open(name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
-# def load_obj(name ):
-#     with open(name, 'rb') as f:
-#         return pickle.load(f)
+def load_obj(name ):
+    with open(name + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 
 # spectra = load_obj('./bachelor_data/spectra_matrix_exp1.pickle')
@@ -188,13 +188,13 @@ for i in range(7):
 
 predict_test= np.empty((5, 7))
 predict_train= np.empty((5, 7))
-for num in range(1000):
+for num in range(1):
    print(num)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    for i in range(7):
      hist = model[i].fit(spectra_train, categorical_train[:,i],
              batch_size=64,
-             epochs=1,
+             epochs=100,
              validation_data=(spectra_test, categorical_test[:,i]), shuffle=True)
      # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
      # print(np.argmax(categorical_test[predict_idx[:5],i], axis=1))
@@ -202,6 +202,7 @@ for num in range(1000):
      predict_train[:, i]= np.argmax(model[i].predict(spectra_train[predict_idx[5:], :,:]), axis=1)
 
      print(np.sum(np.argmax(model[i].predict(spectra_test), axis=1) == np.argmax(categorical_test[:,i], axis=1))/len(categorical_test))
+     save_obj(f'history_{i}', model[i].history)
 
    print('test')
    for j in np.arange(0,5,1):
@@ -209,3 +210,5 @@ for num in range(1000):
    print('train')
    for j in np.arange(5,10,1):
       print(list(categories_train[predict_idx[j],:]), '-----', list(predict_train[j-5,:]))
+
+  
