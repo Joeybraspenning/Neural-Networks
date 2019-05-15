@@ -104,7 +104,7 @@ for i in range(7):
   model[i] = Sequential()
 
 
-  model[i].add(Conv1D(10,5, input_shape=(428,1)))
+  model[i].add(Conv1D(20,5, input_shape=(428,1)))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
@@ -129,6 +129,11 @@ for i in range(7):
 
   model[i].add(MaxPooling1D(2))
 
+  model[i].add(Conv1D(10,3))
+  model[i].add(BatchNormalization(center=True, scale=True))
+  model[i].add(Activation('relu'))
+  model[i].add(Dropout(0.5))
+
   # model[i].add(Conv1D(8,4))
   # model[i].add(BatchNormalization(center=True, scale=True))
   # model[i].add(Activation('relu'))
@@ -145,20 +150,16 @@ for i in range(7):
   # # model[i].add(BatchNormalization(center=True, scale=True))
   # # model[i].add(Activation('relu'))
   # # model[i].add(Dropout(0.5))
-
+  model[i].add(MaxPooling1D(2))
+  
   model[i].add(Conv1D(5,2))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
 
-  # model[i].add(MaxPooling1D(2))
+  model[i].add(MaxPooling1D(2))
 
   model[i].add(Flatten())
-  model[i].add(Dense(500))
-  model[i].add(BatchNormalization(center=True, scale=True))
-  model[i].add(Activation('relu'))
-  model[i].add(Dropout(0.5))
-  
   model[i].add(Dense(200))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
