@@ -5,14 +5,14 @@ from keras.datasets import mnist
 from keras.layers.normalization import BatchNormalization
 import numpy as np
 import tensorflow as tf
-# import pickle
+import pickle
 
 def save_obj(obj, name ):
     with open(name + '.pkl', 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def load_obj(name ):
-    with open(name , 'rb') as f:
+    with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
 
