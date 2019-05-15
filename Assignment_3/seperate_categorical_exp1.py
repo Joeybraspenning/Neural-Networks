@@ -202,7 +202,7 @@ for num in range(1):
      predict_train[:, i]= model[i].predict(spectra_train[predict_idx[5:], :,:]).flatten()
 
      # print(np.sum(np.argmax(model[i].predict(spectra_test), axis=1) == np.argmax(categorical_test[:,i], axis=1))/len(categorical_test))
-     save_obj('history_{}'.format(i), hist.history)
+     save_obj(hist.history, 'history_exp1_{}'.format(i))
 
    print('test')
    for j in np.arange(0,5,1):
