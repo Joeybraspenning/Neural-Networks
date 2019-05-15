@@ -188,13 +188,13 @@ for i in range(7):
 
 predict_test= np.empty((5, 7))
 predict_train= np.empty((5, 7))
-for num in range(100):
+for num in range(10):
    print(num)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    for i in range(7):
      hist = model[i].fit(spectra_train, categories_train[:,i],
              batch_size=64,
-             epochs=1,
+             epochs=100,
              validation_data=(spectra_test, categories_test[:,i]), shuffle=True)
      # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
      # print(np.argmax(categorical_test[predict_idx[:5],i], axis=1))
@@ -202,7 +202,7 @@ for num in range(100):
      predict_train[:, i]= model[i].predict(spectra_train[predict_idx[5:], :,:]).flatten()
 
      # print(np.sum(np.argmax(model[i].predict(spectra_test), axis=1) == np.argmax(categorical_test[:,i], axis=1))/len(categorical_test))
-     # save_obj('history_{}'.format(i), hist.history)
+     save_obj('history_{}'.format(i), hist.history)
 
    print('test')
    for j in np.arange(0,5,1):
