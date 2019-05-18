@@ -1,6 +1,6 @@
 import keras
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout
+from keras.layers import Dense, Activation, Dropout, Conv1D, UpSampling1D, Flatten, Reshape
 from keras.layers.normalization import BatchNormalization
 from keras.models import load_model
 import matplotlib.pyplot as plt
@@ -16,8 +16,8 @@ spectra = spectra.T
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
-spectra_train = spectra[train_idx, :].astype('float32')
-spectra_test = spectra[test_idx, :].astype('float32')
+spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
+spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
 
 spectra_train_noise = spectra_train #+ np.random.normal(0, 0.001, size=spectra_train.shape)
 spectra_test_noise = spectra_test #+ np.random.normal(0, 0.001, size=spectra_test.shape)
@@ -25,49 +25,91 @@ spectra_test_noise = spectra_test #+ np.random.normal(0, 0.001, size=spectra_tes
 
 #######################################################
 
-'''
-print(spectra_train_noise[:,0])
 
+# print(spectra_train_noise[:,0])
+print(spectra_test.shape)
 name = 'relu'
 model = Sequential()
-model.add(Dense(200, input_shape = (428,)))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation(name))
-model.add(Dropout(0.2))
-
-# model.add(Dense(900, activation=name))
-# model.add(Dense(800, activation=name))
-# model.add(Dense(700, activation=name))
-# model.add(Dense(600, activation=name))
-# model.add(Dense(500, activation=name))
-# model.add(Dense(400, activation=name))
-# model.add(Dense(300, activation=name))
-# model.add(Dense(200, activation=name))
-# model.add(Dense(100, activation=name))
-model.add(Dense(100))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation(name))
-model.add(Dropout(0.2))
-
-model.add(Dense(50))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation(name))
-model.add(Dropout(0.2))
-
-model.add(Dense(100))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation(name))
-model.add(Dropout(0.2))
-
-model.add(Dense(200))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation(name))
-model.add(Dropout(0.2))
+# model.add(Dense(200, input_shape = (428,)))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation(name))
+# model.add(Dropout(0.2))
 
 
-model.add(Dense(428))
+model.add(Conv1D(64, 3, strides=2, padding='same', input_shape=(428, 1)))
 model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('sigmoid'))
+model.add(Activation('relu'))
+# model.add(Dropout(0.2))
+
+model.add(Conv1D(32, 3, strides=2, padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(Conv1D(16, 3, strides=2, padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(Conv1D(8, 7, strides=3, padding='valid'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(Flatten())
+model.add(Dense(16))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(Reshape((16, 1)))
+
+# model.add(UpSampling1D(size=2))
+model.add(Conv1D(8, 3, padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(UpSampling1D(size=7))
+model.add(Conv1D(16, 5, strides=2, padding='valid'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(UpSampling1D(size=2))
+model.add(Conv1D(32, 3, padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(UpSampling1D(size=2))
+model.add(Conv1D(64, 3, padding='same'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+model.add(UpSampling1D(size=2))
+model.add(Conv1D(1, 5, padding='valid'))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+
+
+# model.add(Dense(100))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation(name))
+# model.add(Dropout(0.2))
+
+# model.add(Dense(50))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation(name))
+# model.add(Dropout(0.2))
+
+# model.add(Dense(100))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation(name))
+# model.add(Dropout(0.2))
+
+# model.add(Dense(200))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation(name))
+# model.add(Dropout(0.2))
+
+
+# model.add(Dense(428))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('sigmoid'))
 
 model.compile(optimizer='Nadam', \
 				loss = 'mse', metrics=['accuracy'])
@@ -81,20 +123,20 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					verbose = True,
 					shuffle = True)
 model.save('autoencoder.h5')
-'''
-
-
-model = load_model('autoencoder.h5')
 
 
 
-prediction = model.predict(spectra_test_noise)
+# model = load_model('autoencoder.h5')
 
 
-plt.plot(prediction[0,:], label='prediction')
-plt.plot(spectra_test[0,:], label='true')
-plt.legend()
-plt.show()
+
+# prediction = model.predict(spectra_test_noise)
+
+
+# plt.plot(prediction[0,:], label='prediction')
+# plt.plot(spectra_test[0,:], label='true')
+# plt.legend()
+# plt.show()
 '''
 for tel, i in enumerate(np.where(Y_test[:, 6] == 1 )[0][0:10]):
 	fig, ax = plt.subplots(1, 4)
