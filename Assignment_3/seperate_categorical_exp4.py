@@ -181,7 +181,7 @@ for i in range(7):
 
 
 
- model[i].compile(loss='categorical_crossentropy',
+  model[i].compile(loss='categorical_crossentropy',
                 optimizer='Nadam',
                 metrics=['accuracy'])
   model[i].summary()
