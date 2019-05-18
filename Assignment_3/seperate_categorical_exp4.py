@@ -1,10 +1,10 @@
-# import keras
-# from keras.models import Sequential
-# from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten, MaxPooling2D, TimeDistributed
-# from keras.datasets import mnist
-# from keras.layers.normalization import BatchNormalization
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten, MaxPooling2D, TimeDistributed
+from keras.datasets import mnist
+from keras.layers.normalization import BatchNormalization
 import numpy as np
-# import tensorflow as tf
+import tensorflow as tf
 import pickle
 
 def save_obj(obj, name ):
@@ -12,21 +12,21 @@ def save_obj(obj, name ):
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def load_obj(name ):
-    with open(name, 'rb') as f:
+    with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
 
-spectra = load_obj('./bachelor_data/spectra_matrix_exp4.pickle')
-categories = load_obj('./bachelor_data/input_matrix_exp4.pickle')[:, :, 0]
+# spectra = load_obj('./bachelor_data/spectra_matrix_exp4.pickle')
+# categories = load_obj('./bachelor_data/input_matrix_exp4.pickle')[:, :, 0]
 
 
-print(np.unique(categories[1,:]))
+# print(np.unique(categories[1,:]))
 
-print(spectra.shape)
-print(categories.shape)
+# print(spectra.shape)
+# print(categories.shape)
 
-np.save('spectra_exp4', spectra)
-np.save('categories_exp4', categories)
+# np.save('spectra_exp4', spectra)
+# np.save('categories_exp4', categories)
 
 spectra = np.load('spectra_exp4.npy')
 categories = np.log10(np.load('categories_exp4.npy'))
