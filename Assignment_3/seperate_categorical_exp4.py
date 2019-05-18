@@ -26,7 +26,7 @@ print(spectra.shape)
 print(categories.shape)
 
 np.save('spectra_exp4', spectra)
-np.save('categories_exp4', abundances)
+np.save('categories_exp4', categories)
 
 spectra = np.load('spectra_exp4.npy')
 categories = np.log10(np.load('categories_exp4.npy'))
