@@ -174,7 +174,7 @@ for i in range(7):
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
 
-  model[i].add(Dense(1))
+  model[i].add(Dense(2))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('linear'))
 
