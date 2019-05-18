@@ -1,10 +1,10 @@
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten, MaxPooling2D, TimeDistributed
-from keras.datasets import mnist
-from keras.layers.normalization import BatchNormalization
+# import keras
+# from keras.models import Sequential
+# from keras.layers import Dense, Activation, Dropout, Conv1D, MaxPooling1D, Flatten, MaxPooling2D, TimeDistributed
+# from keras.datasets import mnist
+# from keras.layers.normalization import BatchNormalization
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 import pickle
 
 def save_obj(obj, name ):
