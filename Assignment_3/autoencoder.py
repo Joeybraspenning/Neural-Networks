@@ -19,8 +19,8 @@ test_idx = idx[int(0.9*len(idx)):]
 spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
 spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
 
-spectra_train_noise = spectra_train #+ np.random.normal(0, 0.001, size=spectra_train.shape)
-spectra_test_noise = spectra_test #+ np.random.normal(0, 0.001, size=spectra_test.shape)
+spectra_train_noise = spectra_train + np.random.normal(0, 0.1, size=spectra_train.shape)
+spectra_test_noise = spectra_test + np.random.normal(0, 0.1, size=spectra_test.shape)
 
 
 #######################################################
@@ -122,21 +122,21 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					validation_data = (spectra_test_noise, spectra_test),
 					verbose = True,
 					shuffle = True)
-model.save('autoencoder.h5')
+model.save('autoencoder_noise.h5')
 
 
-
+# import matplotlib.pyplot as plt
 # model = load_model('autoencoder.h5')
 
 
 
 # prediction = model.predict(spectra_test_noise)
 
-
-# plt.plot(prediction[0,:], label='prediction')
-# plt.plot(spectra_test[0,:], label='true')
-# plt.legend()
-# plt.show()
+# for i in range(10):
+# 	# plt.plot(prediction[i,:], label='prediction')
+# 	plt.plot(spectra_test[i,:], label='true')
+# 	plt.legend()
+# 	plt.show()
 '''
 for tel, i in enumerate(np.where(Y_test[:, 6] == 1 )[0][0:10]):
 	fig, ax = plt.subplots(1, 4)
