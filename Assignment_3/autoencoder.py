@@ -8,10 +8,10 @@ import numpy as np
 
 
 spectra = np.load('spectra_exp1.npy')
-spectra = spectra.T/np.max(spectra, axis=1)
+# spectra = spectra.T/np.max(spectra, axis=1)
 #median = np.mean(spectra, axis=1)
 #spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
-spectra = spectra.T
+# spectra = spectra.T
 
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
@@ -24,7 +24,7 @@ spectra_test_noise = spectra_test + np.random.normal(0, 0.1, size=spectra_test.s
 
 
 #######################################################
-
+'''
 
 # print(spectra_train_noise[:,0])
 print(spectra_test.shape)
@@ -123,20 +123,21 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					verbose = True,
 					shuffle = True)
 model.save('autoencoder_noise.h5')
+'''
+
+import matplotlib.pyplot as plt
+model = load_model('autoencoder_noise_nonorm.h5')
 
 
-# import matplotlib.pyplot as plt
-# model = load_model('autoencoder.h5')
 
+prediction = model.predict(spectra_test_noise)
 
-
-# prediction = model.predict(spectra_test_noise)
-
-# for i in range(10):
-# 	# plt.plot(prediction[i,:], label='prediction')
-# 	plt.plot(spectra_test[i,:], label='true')
-# 	plt.legend()
-# 	plt.show()
+for i in range(10):
+	plt.plot(prediction[i,:], label='prediction')
+	plt.plot(spectra_test[i,:], label='true')
+	plt.plot(spectra_test_noise[i,:], label='noise')
+	plt.legend()
+	plt.show()
 '''
 for tel, i in enumerate(np.where(Y_test[:, 6] == 1 )[0][0:10]):
 	fig, ax = plt.subplots(1, 4)
