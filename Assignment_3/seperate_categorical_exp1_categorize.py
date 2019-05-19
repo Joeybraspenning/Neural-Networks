@@ -35,9 +35,9 @@ categories = np.load('categories_exp1.npy')
 # print(categories.shape)
 
 # print(np.max(spectra, axis=1).shape)
-median = np.median(spectra, axis=1)
-spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
-spectra = spectra.T
+# median = np.median(spectra, axis=1)
+# spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
+# spectra = spectra.T
 
 # print(spectra.shape)
 # print(np.unique(categories[:,1]))
@@ -202,7 +202,7 @@ for num in range(1):
      predict_train[:, i]= np.argmax(model[i].predict(spectra_train[predict_idx[5:], :,:]), axis=1)
 
      print(np.sum(np.argmax(model[i].predict(spectra_test), axis=1) == np.argmax(categorical_test[:,i], axis=1))/len(categorical_test))
-     save_obj(hist.history, 'history_exp1_categorize_{}'.format(i))
+     save_obj(hist.history, 'history_exp1_categorize_nonorm_{}'.format(i))
 
    print('test')
    for j in np.arange(0,5,1):
