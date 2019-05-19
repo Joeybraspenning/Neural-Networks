@@ -24,7 +24,7 @@ spectra_test_noise = spectra_test + np.random.normal(0, 0.1, size=spectra_test.s
 
 
 #######################################################
-'''
+
 
 # print(spectra_train_noise[:,0])
 print(spectra_test.shape)
@@ -123,21 +123,21 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					verbose = True,
 					shuffle = True)
 model.save('autoencoder_noise.h5')
-'''
-
-import matplotlib.pyplot as plt
-model = load_model('autoencoder_noise_nonorm.h5')
 
 
+# import matplotlib.pyplot as plt
+# model = load_model('autoencoder_noise_nonorm.h5')
 
-prediction = model.predict(spectra_test_noise)
 
-for i in range(10):
-	plt.plot(prediction[i,:], label='prediction')
-	plt.plot(spectra_test[i,:], label='true')
-	plt.plot(spectra_test_noise[i,:], label='noise')
-	plt.legend()
-	plt.show()
+
+# prediction = model.predict(spectra_test_noise)
+
+# for i in range(10):
+# 	plt.plot(prediction[i,:], label='prediction')
+# 	plt.plot(spectra_test[i,:], label='true')
+# 	plt.plot(spectra_test_noise[i,:], label='noise')
+# 	plt.legend()
+# 	plt.show()
 '''
 for tel, i in enumerate(np.where(Y_test[:, 6] == 1 )[0][0:10]):
 	fig, ax = plt.subplots(1, 4)
