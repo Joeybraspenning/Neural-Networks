@@ -14,19 +14,25 @@ def normalize(spectra):
 spectra = np.load('spectra_exp1.npy')
 # print(spectra[1177,:])
 # print(spectra.shape)
-spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
+# spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
 # print(np.sum(np.isnan(spectra)))
 # print(np.sum(np.max(spectra, axis=1) == 0))
 # print(np.where(np.max(spectra, axis=1) == 0))
 # print(spectra[np.max(spectra, axis=1) == 0][0])
-spectra = spectra[np.max(spectra, axis=1) != 0]
-spectra = spectra.T/np.max(spectra, axis=1)
+# spectra = spectra[np.max(spectra, axis=1) != 0]
+# spectra = spectra.T/np.max(spectra, axis=1)
 # print(np.sum(np.isnan(spectra)))
 
+spectra_noise = spectra.copy() + np.random.normal(0, 0.5, size=spectra.shape)
 
-#median = np.mean(spectra, axis=1)
-#spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
+median = np.mean(spectra, axis=1)
+spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
 spectra = spectra.T
+
+median = np.mean(spectra_noise, axis=1)
+spectra_noise = ((spectra_noise.T - median) / np.max(spectra_noise, axis=1)) + median
+spectra_noise = spectra_noise.T
+
 
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
@@ -37,8 +43,12 @@ spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
 # spectra_test = spectra[test_idx, :]
 
 
-spectra_train_noise = spectra_train + np.random.normal(0, 0.5, size=spectra_train.shape)
-spectra_test_noise = spectra_test + np.random.normal(0, 0.5, size=spectra_test.shape)
+# spectra_train_noise = spectra_train + np.random.normal(0, 0.5, size=spectra_train.shape)
+# spectra_test_noise = spectra_test + np.random.normal(0, 0.5, size=spectra_test.shape)
+
+spectra_train_noise = np.expand_dims(spectra_noise[train_idx, :], axis=2)
+spectra_test_noise = np.expand_dims(spectra_noise[test_idx, :], axis=2)
+
 
 # spectra_train = np.expand_dims(normalize(spectra_train), axis=2)
 # spectra_test = np.expand_dims(normalize(spectra_test), axis=2)
@@ -150,11 +160,11 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					validation_data = (spectra_test_noise, spectra_test),
 					verbose = True,
 					shuffle = True)
-model.save('autoencoder_noise_large_fullrange.h5')
+model.save('autoencoder_noise_mediannorm_noisefirst.h5')
 
 
 # import matplotlib.pyplot as plt
-# model = load_model('autoencoder_noise_fullrange.h5')
+# model = load_model('autoencoder_noise_large_fullrange.h5')
 
 
 
