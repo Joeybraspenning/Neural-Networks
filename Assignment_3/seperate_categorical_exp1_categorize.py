@@ -46,7 +46,7 @@ spectra = spectra.T/np.max(spectra, axis=1)
 # print(np.max(spectra, axis=1).shape)
 # median = np.median(spectra, axis=1)
 # spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
-# spectra = spectra.T
+spectra = spectra.T
 
 # print(spectra.shape)
 # print(np.unique(categories[:,1]))
