@@ -12,24 +12,25 @@ def normalize(spectra):
 	return spectra
 
 spectra = np.load('spectra_exp1.npy')
-# spectra = spectra.T/np.max(spectra, axis=1)
+spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
+spectra = spectra.T/np.max(spectra, axis=1)
 #median = np.mean(spectra, axis=1)
 #spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
-# spectra = spectra.T
+spectra = spectra.T
 
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
-spectra_train = spectra[train_idx, :]
-spectra_test = spectra[test_idx, :]
+spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
+spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
 
 spectra_train_noise = spectra_train + np.random.normal(0, 0.1, size=spectra_train.shape)
 spectra_test_noise = spectra_test + np.random.normal(0, 0.1, size=spectra_test.shape)
 
-spectra_train = np.expand_dims(normalize(spectra_train), axis=2)
-spectra_test = np.expand_dims(normalize(spectra_test), axis=2)
-spectra_train_noise = np.expand_dims(normalize(spectra_train_noise), axis=2)
-spectra_test_noise = np.expand_dims(normalize(spectra_test_noise), axis=2)
+# spectra_train = np.expand_dims(normalize(spectra_train), axis=2)
+# spectra_test = np.expand_dims(normalize(spectra_test), axis=2)
+# spectra_train_noise = np.expand_dims(normalize(spectra_train_noise), axis=2)
+# spectra_test_noise = np.expand_dims(normalize(spectra_test_noise), axis=2)
 
 
 
@@ -133,11 +134,11 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					validation_data = (spectra_test_noise, spectra_test),
 					verbose = True,
 					shuffle = True)
-model.save('autoencoder_noise_before.h5')
+model.save('autoencoder_noise_fullrange.h5')
 
 
 # import matplotlib.pyplot as plt
-# model = load_model('autoencoder_noise_nonorm.h5')
+# model = load_model('autoencoder_noise.h5')
 
 
 
@@ -146,7 +147,7 @@ model.save('autoencoder_noise_before.h5')
 # for i in range(10):
 # 	plt.plot(prediction[i,:], label='prediction')
 # 	plt.plot(spectra_test[i,:], label='true')
-# 	plt.plot(spectra_test_noise[i,:], label='noise')
+# 	plt.plot(spectra_test_noise[i,:], label='noise', linewidth=1, alpha=0.5, zorder=-1)
 # 	plt.legend()
 # 	plt.show()
 '''
