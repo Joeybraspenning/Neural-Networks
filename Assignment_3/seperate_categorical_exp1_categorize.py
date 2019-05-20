@@ -32,20 +32,20 @@ spectra = np.load('spectra_exp1.npy')
 categories = np.load('categories_exp1.npy')
 
 
-spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
+# spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
 # print(np.sum(np.isnan(spectra)))
 # print(np.sum(np.max(spectra, axis=1) == 0))
 # print(np.where(np.max(spectra, axis=1) == 0))
 # print(spectra[np.max(spectra, axis=1) == 0][0])
-spectra = spectra[np.max(spectra, axis=1) != 0]
-spectra = spectra.T/np.max(spectra, axis=1)
+# spectra = spectra[np.max(spectra, axis=1) != 0]
+# spectra = spectra.T/np.max(spectra, axis=1)
 
 
 # print(categories.shape)
 
 # print(np.max(spectra, axis=1).shape)
-# median = np.median(spectra, axis=1)
-# spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
+median = np.median(spectra, axis=1)
+spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
 spectra = spectra.T
 
 # print(spectra.shape)
@@ -84,6 +84,9 @@ print(spectra_test.shape)
 print(categorical_train.shape)
 print(categorical_test.shape)
 
+np.save('exp1_testspectra', spectra_test)
+np.save('exp1_categorical_test', categorical_test)
+
 # print(categorical_test.shape)
 # u, c  = np.unique(categories_train, return_counts=True, axis=0)
 # print(u, c)
@@ -101,8 +104,8 @@ print(categorical_test.shape)
 # spectra_test = np.tile(spectra_test, (1,7,1,1))
 # print(spectra_train.shape)
 
-def step_func(x):
-  return (tf.math.sign(x) + 1)/2
+# def step_func(x):
+#   return (tf.math.sign(x) + 1)/2
 
 model = dict()
 
@@ -195,6 +198,9 @@ for i in range(7):
                 metrics=['accuracy'])
   model[i].summary()
 
+  model.save('categorize_exp1.h5')
+
+
 predict_test= np.empty((5, 7))
 predict_train= np.empty((5, 7))
 for num in range(1):
@@ -203,7 +209,7 @@ for num in range(1):
    for i in range(7):
      hist = model[i].fit(spectra_train, categorical_train[:,i],
              batch_size=64,
-             epochs=100,
+             epochs=200,
              validation_data=(spectra_test, categorical_test[:,i]), shuffle=True)
      # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
      # print(np.argmax(categorical_test[predict_idx[:5],i], axis=1))
