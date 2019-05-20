@@ -3,7 +3,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Conv1D, UpSampling1D, Flatten, Reshape
 from keras.layers.normalization import BatchNormalization
 from keras.models import load_model
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 
 def normalize(spectra):
@@ -42,9 +42,9 @@ spectra_test_noise = spectra_test + np.random.normal(0, 0.1, size=spectra_test.s
 # spectra_train_noise = np.expand_dims(normalize(spectra_train_noise), axis=2)
 # spectra_test_noise = np.expand_dims(normalize(spectra_test_noise), axis=2)
 
-plt.plot(spectra_train[0,:], label='true')
-plt.plot(spectra_train_noise[0,:], label='noise', linewidth=1, alpha=0.5, zorder=-1)
-plt.show()
+# plt.plot(spectra_train[0,:], label='true')
+# plt.plot(spectra_train_noise[0,:], label='noise', linewidth=1, alpha=0.5, zorder=-1)
+# plt.show()
 
 #######################################################
 
