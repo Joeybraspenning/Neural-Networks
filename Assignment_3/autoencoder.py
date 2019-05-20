@@ -20,16 +20,16 @@ spectra = np.load('spectra_exp1.npy')
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
-spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
-spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
+spectra_train = spectra[train_idx, :]
+spectra_test = spectra[test_idx, :]
 
 spectra_train_noise = spectra_train + np.random.normal(0, 0.1, size=spectra_train.shape)
 spectra_test_noise = spectra_test + np.random.normal(0, 0.1, size=spectra_test.shape)
 
-spectra_train = normalize(spectra_train)
-spectra_test = normalize(spectra_test)
-spectra_train_noise = normalize(spectra_train_noise)
-spectra_test_noise = normalize(spectra_test_noise)
+spectra_train = np.expand_dims(normalize(spectra_train), axis=2)
+spectra_test = np.expand_dims(normalize(spectra_test), axis=2)
+spectra_train_noise = np.expand_dims(normalize(spectra_train_noise), axis=2)
+spectra_test_noise = np.expand_dims(normalize(spectra_test_noise), axis=2)
 
 
 
