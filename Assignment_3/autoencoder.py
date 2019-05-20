@@ -6,6 +6,10 @@ from keras.models import load_model
 # import matplotlib.pyplot as plt
 import numpy as np
 
+def normalize(spectra):
+	spectra = spectra.T/np.max(spectra, axis=1)
+	spectra = spectra.T
+	return spectra
 
 spectra = np.load('spectra_exp1.npy')
 # spectra = spectra.T/np.max(spectra, axis=1)
@@ -21,6 +25,13 @@ spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
 
 spectra_train_noise = spectra_train + np.random.normal(0, 0.1, size=spectra_train.shape)
 spectra_test_noise = spectra_test + np.random.normal(0, 0.1, size=spectra_test.shape)
+
+spectra_train = normalize(spectra_train)
+spectra_test = normalize(spectra_test)
+spectra_train_noise = normalize(spectra_train_noise)
+spectra_test_noise = normalize(spectra_test_noise)
+
+
 
 
 #######################################################
@@ -122,7 +133,7 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					validation_data = (spectra_test_noise, spectra_test),
 					verbose = True,
 					shuffle = True)
-model.save('autoencoder_noise.h5')
+model.save('autoencoder_noise_before.h5')
 
 
 # import matplotlib.pyplot as plt
