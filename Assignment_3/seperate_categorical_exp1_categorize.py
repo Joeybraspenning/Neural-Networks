@@ -198,7 +198,7 @@ for i in range(7):
                 metrics=['accuracy'])
   model[i].summary()
 
-  model.save('categorize_exp1.h5')
+  model[i].save('categorize_exp1.h5')
 
 
 predict_test= np.empty((5, 7))
