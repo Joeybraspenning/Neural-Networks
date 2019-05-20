@@ -198,7 +198,6 @@ for i in range(7):
                 metrics=['accuracy'])
   model[i].summary()
 
-  model[i].save('categorize_exp1_{}.h5'.format(i))
 
 
 predict_test= np.empty((5, 7))
@@ -211,6 +210,8 @@ for num in range(1):
              batch_size=64,
              epochs=200,
              validation_data=(spectra_test, categorical_test[:,i]), shuffle=True)
+     model[i].save('categorize_exp1_{}.h5'.format(i))
+
      # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
      # print(np.argmax(categorical_test[predict_idx[:5],i], axis=1))
      predict_test[:, i] = np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1)
