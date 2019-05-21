@@ -23,7 +23,7 @@ spectra = np.load('spectra_exp1.npy')
 # spectra = spectra.T/np.max(spectra, axis=1)
 # print(np.sum(np.isnan(spectra)))
 
-spectra_noise = spectra.copy() + np.random.normal(0, 0.25, size=spectra.shape)
+spectra_noise = spectra.copy() + np.random.normal(0, 0.75, size=spectra.shape)
 
 median = np.mean(spectra, axis=1)
 spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
@@ -164,14 +164,16 @@ model.save('autoencoder_noise_mediannorm_lessnoisefirst.h5')
 
 
 # import matplotlib.pyplot as plt
-# model = load_model('autoencoder_noise_mediannorm_noisefirst.h5')
-
+# model = load_model('autoencoder_noise_mediannorm_lessnoisefirst.h5')
+# modell2 = load_model('autoencoder_noise_mediannorm_noisefirst.h5')
 
 
 # prediction = model.predict(spectra_test_noise)
+# prediction2 = model2.predict(spectra_test_noise)
 
 # for i in range(10):
 # 	plt.plot(prediction[i,:], label='prediction')
+# 	plt.plot(prediction2[i,:], label='prediction2')
 # 	plt.plot(spectra_test[i,:], label='true')
 # 	plt.plot(spectra_test_noise[i,:], label='noise', linewidth=1, alpha=0.5, zorder=-1)
 # 	plt.legend()
