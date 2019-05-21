@@ -218,7 +218,7 @@ model.add(Activation('relu'))
 
 
 
-model.compile(loss='mean_percentage_error',
+model.compile(loss='mean_absolute_percentage_error',
               optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
