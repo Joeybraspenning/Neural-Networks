@@ -33,6 +33,9 @@ def load_obj(name ):
 spectra = np.load('spectra_exp3.npy')
 temperatures = np.load('temperatures_exp3.npy')
 
+# temperatures /= np.max(temperatures)
+temperatures -= np.min(temperatures)
+
 
 # spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
 # print(np.sum(np.isnan(spectra)))
@@ -56,10 +59,10 @@ temperatures = np.load('temperatures_exp3.npy')
 idx = np.random.permutation(spectra.shape[0])
 train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
-spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
-spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
-temperatures_train = np.array(temperatures[train_idx], dtype='int')
-temperatures_test = np.array(temperatures[test_idx], dtype='int')
+spectra_train = spectra[train_idx, :]
+spectra_test = spectra[test_idx, :]
+temperatures_train = np.array(temperatures[train_idx])
+temperatures_test = np.array(temperatures[test_idx])
 # categories_train = categories[train_idx, :]
 # categories_test = categories[test_idx, :]
 
@@ -118,18 +121,37 @@ print(temperatures_test.shape)
 model = Sequential()
 
 
-model.add(Conv1D(1,1, input_shape=(428,1)))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-# model.add(Flatten())
-# model.add(Dense(428, input_shape=(428,)))
+drop = 0.5
+# model.add(Conv1D(1,1, input_shape=(428,1)))
 # model.add(BatchNormalization(center=True, scale=True))
 # model.add(Activation('relu'))
 # model.add(Dropout(0.5))
 
 
+model.add(Dense(428, input_shape=(428,)))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(drop))
+
+model.add(Dense(400))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(drop))
+
+model.add(Dense(350))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(drop))
+
+model.add(Dense(300))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(drop))
+
+model.add(Dense(250))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(drop))
 
 # model.add(Conv1D(16, 8, padding='same', input_shape=(428,1)))
 # model.add(BatchNormalization(center=True, scale=True))
@@ -167,26 +189,26 @@ model.add(Dropout(0.5))
 
 # model.add(MaxPooling1D(2))
 
-model.add(Flatten())
+# model.add(Flatten())
 model.add(Dense(200))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(drop))
 
 model.add(Dense(100))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(drop))
 
 model.add(Dense(50))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(drop))
 
 model.add(Dense(10))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(drop))
 
 model.add(Dense(1))
 model.add(BatchNormalization(center=True, scale=True))
@@ -202,28 +224,30 @@ model.summary()
 
 
 
-for num in range(1):
+for num in range(20):
    print(num)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    hist = model.fit(spectra_train, temperatures_train,
            batch_size=64,
-           epochs=200,
+           epochs=10,
            validation_data=(spectra_test, temperatures_test), shuffle=True)
-   model.save('temperature_exp3_{}.h5'.format(i))
+   # model.save('temperature_exp3_{}.h5'.format(i))
 
+   predict_test = model.predict(spectra_test[predict_idx[:5]])
+   predict_train = model.predict(spectra_train[predict_idx[5:]])
    # print(np.argmax(model.predict(spectra_test[predict_idx[:5], :,:]), axis=1))
    # print(np.argmax(categorical_test[predict_idx[:5],i], axis=1))
    # predict_test[:, i] = np.argmax(model.predict(spectra_test[predict_idx[:5], :,:]), axis=1)
    # predict_train[:, i]= np.argmax(model.predict(spectra_train[predict_idx[5:], :,:]), axis=1)
 
    # print(np.sum(np.argmax(model.predict(spectra_test), axis=1) == np.argmax(categorical_test[:,i], axis=1))/len(categorical_test))
-   save_obj(hist.history, 'history_temperature_exp3')
+   # save_obj(hist.history, 'history_temperature_exp3')
 
-   # print('test')
-   # for j in np.arange(0,5,1):
-   #    print(list(categories_test[predict_idx[j],:]), '-----', list(predict_test[j,:]))
-   # print('train')
-   # for j in np.arange(5,10,1):
-   #    print(list(categories_train[predict_idx[j],:]), '-----', list(predict_train[j-5,:]))
+   print('test')
+   for j in np.arange(0,5,1):
+      print(temperatures_test[predict_idx[j]], '-----', predict_test[j])
+   print('train')
+   for j in np.arange(5,10,1):
+      print(temperatures_train[predict_idx[j]], '-----', predict_train[j-5])
 
   
