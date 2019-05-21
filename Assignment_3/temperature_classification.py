@@ -34,8 +34,8 @@ spectra = np.load('spectra_exp3.npy')
 temperatures = np.load('temperatures_exp3.npy')
 
 
-temperatures -= np.min(temperatures)
-temperatures /= np.max(temperatures)
+# temperatures -= np.min(temperatures)
+# temperatures /= np.max(temperatures)
 
 
 # spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
@@ -218,7 +218,7 @@ model.add(Activation('relu'))
 
 
 
-model.compile(loss='mse',
+model.compile(loss='mean_percentage_error',
               optimizer='Nadam',
               metrics=['accuracy'])
 model.summary()
