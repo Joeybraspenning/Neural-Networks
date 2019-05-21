@@ -160,7 +160,7 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					validation_data = (spectra_test_noise, spectra_test),
 					verbose = True,
 					shuffle = True)
-model.save('autoencoder_noise_mediannorm_lessnoisefirst.h5')
+model.save('autoencoder_noise_mediannorm_morenoisefirst.h5')
 
 
 # import matplotlib.pyplot as plt
