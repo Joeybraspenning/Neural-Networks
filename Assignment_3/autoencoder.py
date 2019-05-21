@@ -23,7 +23,7 @@ spectra = np.load('spectra_exp1.npy')
 # spectra = spectra.T/np.max(spectra, axis=1)
 # print(np.sum(np.isnan(spectra)))
 
-spectra_noise = spectra.copy() + np.random.normal(0, 0.05, size=spectra.shape)
+spectra_noise = spectra.copy() + np.random.normal(0, 0.15, size=spectra.shape)
 
 median = np.mean(spectra, axis=1)
 spectra = ((spectra.T - median) / np.max(spectra, axis=1)) + median
@@ -160,7 +160,7 @@ history = model.fit(spectra_train_noise, spectra_train,\
 					validation_data = (spectra_test_noise, spectra_test),
 					verbose = True,
 					shuffle = True)
-model.save('autoencoder_noise_mediannorm_005.h5')
+model.save('autoencoder_noise_mediannorm_015.h5')
 
 
 # import matplotlib.pyplot as plt
