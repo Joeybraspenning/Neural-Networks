@@ -58,8 +58,8 @@ train_idx = idx[:int(0.9*len(idx))]
 test_idx = idx[int(0.9*len(idx)):]
 spectra_train = np.expand_dims(spectra[train_idx, :], axis=2)
 spectra_test = np.expand_dims(spectra[test_idx, :], axis=2)
-temperatures_train = np.array(temperatures[train_idx, :], dtype='int')
-temperatures_test = np.array(temperatures[test_idx, :], dtype='int')
+temperatures_train = np.array(temperatures[train_idx], dtype='int')
+temperatures_test = np.array(temperatures[test_idx], dtype='int')
 # categories_train = categories[train_idx, :]
 # categories_test = categories[test_idx, :]
 
