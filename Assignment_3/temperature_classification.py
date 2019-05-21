@@ -33,8 +33,9 @@ def load_obj(name ):
 spectra = np.load('spectra_exp3.npy')
 temperatures = np.load('temperatures_exp3.npy')
 
-# temperatures /= np.max(temperatures)
+
 temperatures -= np.min(temperatures)
+temperatures /= np.max(temperatures)
 
 
 # spectra -= np.expand_dims(np.min(spectra, axis=1), axis=1)
@@ -133,25 +134,25 @@ model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(drop))
 
-model.add(Dense(400))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(drop))
+# model.add(Dense(400))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(drop))
 
-model.add(Dense(350))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(drop))
+# model.add(Dense(350))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(drop))
 
-model.add(Dense(300))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(drop))
+# model.add(Dense(300))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(drop))
 
-model.add(Dense(250))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(drop))
+# model.add(Dense(250))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(drop))
 
 # model.add(Conv1D(16, 8, padding='same', input_shape=(428,1)))
 # model.add(BatchNormalization(center=True, scale=True))
