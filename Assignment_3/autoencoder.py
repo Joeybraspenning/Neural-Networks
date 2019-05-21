@@ -156,7 +156,7 @@ model.summary()
 
 history = model.fit(spectra_train_noise, spectra_train,\
 					batch_size = 128,\
-					epochs = 300,\
+					epochs = 600,\
 					validation_data = (spectra_test_noise, spectra_test),
 					verbose = True,
 					shuffle = True)
