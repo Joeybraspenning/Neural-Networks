@@ -168,19 +168,19 @@ for i in range(7):
 
 
   model[i].compile(loss='categorical_crossentropy',
-                optimizer='Nadam',
+                optimizer='SGD',
                 metrics=['accuracy'])
   model[i].summary()
 
 predict_test= np.empty((5, 7))
 predict_train= np.empty((5, 7))
-for num in range(10):
+for num in range(1):
    print(num)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    for i in range(7):
      hist = model[i].fit(spectra_train, categorical_train[:,i],
              batch_size=1000,
-             epochs=10,
+             epochs=100,
              validation_data=(spectra_test, categorical_test[:,i]), shuffle=True)
      # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
      # print(np.argmax(categorical_test[predict_idx[:5],i], axis=1))
