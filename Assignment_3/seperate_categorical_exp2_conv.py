@@ -115,7 +115,7 @@ for i in range(7):
 
   model[i].add(MaxPooling1D(2))
 
-  model[i].add(Conv1D(8,32))
+  model[i].add(Conv1D(8,16))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
@@ -168,7 +168,7 @@ for i in range(7):
 
 
   model[i].compile(loss='categorical_crossentropy',
-                optimizer='SGD',
+                optimizer='Nadam',
                 metrics=['accuracy'])
   model[i].summary()
 
