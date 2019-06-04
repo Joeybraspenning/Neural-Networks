@@ -149,7 +149,7 @@ model.summary()
 for i in range(1000):
    print(i)
    hist = model.fit(spectra_train, categories_train,
-           batch_size=64,
+           batch_size=1000,
            epochs=1,
            validation_data=(spectra_test, categories_test), shuffle=True)
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
