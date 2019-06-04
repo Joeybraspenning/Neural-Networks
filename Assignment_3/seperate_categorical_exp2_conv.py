@@ -103,75 +103,54 @@ for i in range(7):
 
   model[i] = Sequential()
 
-
-  model[i].add(Conv1D(20,5, input_shape=(428,1)))
+  model[i].add(Conv1D(16, 128, input_shape=(428,1)))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
 
-  # model[i].add(Flatten())
-  # model[i].add(Dense(428, input_shape=(428,)))
-  # model[i].add(BatchNormalization(center=True, scale=True))
-  # model[i].add(Activation('relu'))
-  # model[i].add(Dropout(0.5))
-
-
-
-  # model[i].add(Conv1D(16, 8, padding='same', input_shape=(428,1)))
-  # model[i].add(BatchNormalization(center=True, scale=True))
-  # model[i].add(Activation('relu'))
-  # model[i].add(Dropout(0.5))
-
-  # # model[i].add(Conv1D(128,8))
-  # # model[i].add(BatchNormalization(center=True, scale=True))
-  # # model[i].add(Activation('relu'))
-  # # model[i].add(Dropout(0.5))
+  model[i].add(Conv1D(8,64))
+  model[i].add(BatchNormalization(center=True, scale=True))
+  model[i].add(Activation('relu'))
+  model[i].add(Dropout(0.5))
 
   model[i].add(MaxPooling1D(2))
 
-  model[i].add(Conv1D(10,3))
+  model[i].add(Conv1D(8,32))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
 
-  # model[i].add(Conv1D(8,4))
+  model[i].add(Conv1D(4,16))
+  model[i].add(BatchNormalization(center=True, scale=True))
+  model[i].add(Activation('relu'))
+  model[i].add(Dropout(0.5))
+
+  model[i].add(MaxPooling1D(2))
+
+  # model[i].add(Conv1D(32,2))
   # model[i].add(BatchNormalization(center=True, scale=True))
   # model[i].add(Activation('relu'))
   # model[i].add(Dropout(0.5))
 
-  # # model[i].add(Conv1D(64,4))
-  # # model[i].add(BatchNormalization(center=True, scale=True))
-  # # model[i].add(Activation('relu'))
-  # # model[i].add(Dropout(0.5))
+  model[i].add(Conv1D(1,1))
+  model[i].add(BatchNormalization(center=True, scale=True))
+  model[i].add(Activation('relu'))
+  model[i].add(Dropout(0.5))
 
   # model[i].add(MaxPooling1D(2))
 
-  # # model[i].add(Conv1D(32,4))
-  # # model[i].add(BatchNormalization(center=True, scale=True))
-  # # model[i].add(Activation('relu'))
-  # # model[i].add(Dropout(0.5))
-  model[i].add(MaxPooling1D(2))
-  
-  model[i].add(Conv1D(5,2))
-  model[i].add(BatchNormalization(center=True, scale=True))
-  model[i].add(Activation('relu'))
-  model[i].add(Dropout(0.5))
-
-  model[i].add(MaxPooling1D(2))
-
   model[i].add(Flatten())
-  model[i].add(Dense(200))
-  model[i].add(BatchNormalization(center=True, scale=True))
-  model[i].add(Activation('relu'))
-  model[i].add(Dropout(0.5))
+  # model[i].add(Dense(100))
+  # model[i].add(BatchNormalization(center=True, scale=True))
+  # model[i].add(Activation('relu'))
+  # model[i].add(Dropout(0.5))
 
+  # model[i].add(Dense(50))
+  # model[i].add(BatchNormalization(center=True, scale=True))
+  # model[i].add(Activation('relu'))
+  # model[i].add(Dropout(0.5))
 
-  model[i].add(Dense(100))
-  model[i].add(BatchNormalization(center=True, scale=True))
-  model[i].add(Activation('relu'))
-  model[i].add(Dropout(0.5))
-
-  model[i].add(Dense(50))
+  model[i].add(Dense(25))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
@@ -200,7 +179,7 @@ for num in range(1):
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    for i in range(7):
      hist = model[i].fit(spectra_train, categorical_train[:,i],
-             batch_size=64,
+             batch_size=100,
              epochs=100,
              validation_data=(spectra_test, categorical_test[:,i]), shuffle=True)
      # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
