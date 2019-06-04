@@ -179,7 +179,7 @@ for num in range(1):
    predict_idx = np.random.randint(0,0.1*len(idx), 10)
    for i in range(7):
      hist = model[i].fit(spectra_train, categorical_train[:,i],
-             batch_size=100,
+             batch_size=1000,
              epochs=100,
              validation_data=(spectra_test, categorical_test[:,i]), shuffle=True)
      # print(np.argmax(model[i].predict(spectra_test[predict_idx[:5], :,:]), axis=1))
