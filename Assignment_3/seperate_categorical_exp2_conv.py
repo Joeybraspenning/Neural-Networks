@@ -115,17 +115,17 @@ for i in range(7):
 
   model[i].add(MaxPooling1D(2))
 
-  model[i].add(Conv1D(8,16))
+  # model[i].add(Conv1D(8,16))
+  # model[i].add(BatchNormalization(center=True, scale=True))
+  # model[i].add(Activation('relu'))
+  # model[i].add(Dropout(0.5))
+
+  model[i].add(Conv1D(4,32))
   model[i].add(BatchNormalization(center=True, scale=True))
   model[i].add(Activation('relu'))
   model[i].add(Dropout(0.5))
 
-  model[i].add(Conv1D(4,16))
-  model[i].add(BatchNormalization(center=True, scale=True))
-  model[i].add(Activation('relu'))
-  model[i].add(Dropout(0.5))
-
-  model[i].add(MaxPooling1D(2))
+  # model[i].add(MaxPooling1D(2))
 
   # model[i].add(Conv1D(32,2))
   # model[i].add(BatchNormalization(center=True, scale=True))
