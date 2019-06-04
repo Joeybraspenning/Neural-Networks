@@ -82,34 +82,34 @@ def step_func(x):
 
 model = Sequential()
 
-model.add(Conv1D(256, 8, padding='same', input_shape=(428,1)))
+model.add(Conv1D(16, 128, input_shape=(428,1)))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Conv1D(128,8))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(MaxPooling1D(2))
-
-model.add(Conv1D(128,4))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-
-model.add(Conv1D(64,4))
+model.add(Conv1D(8,64))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(MaxPooling1D(2))
 
-model.add(Conv1D(32,2))
+model.add(Conv1D(8,32))
 model.add(BatchNormalization(center=True, scale=True))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
+
+model.add(Conv1D(4,16))
+model.add(BatchNormalization(center=True, scale=True))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(MaxPooling1D(2))
+
+# model.add(Conv1D(32,2))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(0.5))
 
 model.add(Conv1D(1,1))
 model.add(BatchNormalization(center=True, scale=True))
@@ -119,15 +119,15 @@ model.add(Dropout(0.5))
 # model.add(MaxPooling1D(2))
 
 model.add(Flatten())
-model.add(Dense(100))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
+# model.add(Dense(100))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(0.5))
 
-model.add(Dense(50))
-model.add(BatchNormalization(center=True, scale=True))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
+# model.add(Dense(50))
+# model.add(BatchNormalization(center=True, scale=True))
+# model.add(Activation('relu'))
+# model.add(Dropout(0.5))
 
 model.add(Dense(25))
 model.add(BatchNormalization(center=True, scale=True))
